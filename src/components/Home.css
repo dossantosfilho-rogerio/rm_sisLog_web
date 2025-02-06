@@ -1,0 +1,15 @@
+/* Remove o sublinhado do link */
+.card-hover {
+    text-decoration: none;
+    display: block; /* Garante que o link ocupe toda a área do card */
+  }
+  
+  /* Aplica o efeito de "salto" quando passar o mouse sobre o Card */
+  .card-hover .card {
+    transition: all 0.3s ease; /* Transição suave para o efeito */
+  }
+  
+  .card-hover .card:hover {
+    transform: translateY(-5px);  /* Eleva o card para cima */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);  /* Sombra para dar profundidade */
+  }
