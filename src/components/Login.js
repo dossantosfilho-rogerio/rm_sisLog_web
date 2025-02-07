@@ -68,31 +68,6 @@ const Login = () => {
         {mensagem && <p>{mensagem}</p>}
       </Card.Body>
     </Card>
-    //   <form >
-    //     <div>
-    //       <label htmlFor="cpf">CPF</label>
-    //       <input
-    //         type="text"
-    //         id="cpf"
-    //         value={cpf}
-    //         onChange={(e) => setCpf(e.target.value)}
-    //         required
-    //       />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="senha">Senha</label>
-    //       <input
-    //         type="password"
-    //         id="senha"
-    //         value={senha}
-    //         onChange={(e) => setSenha(e.target.value)}
-    //         required
-    //       />
-    //     </div>
-    //     <button type="submit">Entrar</button>
-    //   </form>
-    //   {mensagem && <p>{mensagem}</p>}
-    
   );
 };
 

@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axiosInstance from '../services/axios';
 
 // Função para login
 export const login = async (cpf, password) => {
   try {
-    const response = await axios.post('http://localhost:8000/api/login', { cpf, password });
+    const response = await axiosInstance.post('/login', { cpf, password });
     if(response.data.token){
         localStorage.setItem('token', response.data.token); 
     } else {

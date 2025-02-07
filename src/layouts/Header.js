@@ -1,7 +1,8 @@
 import { Container, NavDropdown, Navbar } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const handleLogOut = () => {
     localStorage.removeItem('token');
     navigate("/"); 
