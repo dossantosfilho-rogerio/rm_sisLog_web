@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from '../../layouts/Header';
 import './Compra.module.css';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Container, Form, InputGroup, Row, Tab, Table } from 'react-bootstrap';
@@ -10,6 +10,8 @@ const navigate = useNavigate();
 const [compras, setCompras] = useState([]);
 const [numero_documento, setNumeroDocumento] = useState([]);
 const [selectedOption, setSelectedOption] = useState(null);
+const [searchParams] = useSearchParams();
+const numero_documentoParams = searchParams.get("numero_documento"); // Obtém o valor do parâmetro "numero_documento"
 
 const redirecionarAdicionarCompra = () => {
     navigate("/compra");
@@ -17,7 +19,7 @@ const redirecionarAdicionarCompra = () => {
 
 const carregarCompras = async () => {
     try {
-      const dados = await fetchCompras(numero_documento, selectedOption);
+      const dados = await fetchCompras(numero_documentoParams, selectedOption);
       setCompras(dados.data);
     } catch (error) {
       console.error("Erro ao carregar Compras:", error);
@@ -25,8 +27,11 @@ const carregarCompras = async () => {
   };
 
   useEffect(() => {
-    carregarCompras(); // Busca as compras automaticamente
-    }, []);
+      if (numero_documentoParams) {
+        setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
+        carregarCompras();
+      }
+    }, [numero_documentoParams]);
   
 
   return (

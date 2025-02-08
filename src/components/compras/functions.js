@@ -32,4 +32,37 @@ export const fetchCompras = async (numero_documento = null, fornecedor = null, p
       return [];
     }
   };
+
+
+  export const fetchProdutosOptions = async (inputValue) => {
+    if (!inputValue) return [];
+  
+    try {
+      const response = await axiosInstance.get(`/listProdutosSelect?search=${inputValue}`);
+        console.log(response);
+      return response.data.map((pessoa) => ({
+        value: pessoa.id,
+        label: pessoa.nome
+      }));
+    } catch (error) {
+      console.error("Erro ao buscar opções:", error);
+      return [];
+    }
+  };
+
+
+  export const createCompra = async (fornecedor_id, data_compra, produtos) => {
+    if (produtos.length <= 0) throw new Error("Necessário ao menos um produto.");
+    
+  
+    try {
+      let pessoa_id = fornecedor_id.value;
+      const response = await axiosInstance.post(`/createCompra`, { pessoa_id, data_compra, produtos });
+      return response.data;
+      
+    } catch (error) {
+      console.error("Erro ao incluir a compra:", error);
+      return [];
+    }
+  };
   
