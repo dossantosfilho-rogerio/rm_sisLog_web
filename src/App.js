@@ -6,6 +6,8 @@ import Home from "./components/Home";
 import ListProdutos from "./components/produtos/listProdutos";
 import ProtectedRoute from "./components/ProtectedRoute"; // Componente de Rota Protegida
 import ListCompras from './components/compras/listCompras';
+import ListPessoas from './components/pessoas/listPessoas';
+import Pessoa from './components/pessoas/Pessoa';
 import Compra from './components/compras/Compra';
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/produtos" element={<ListProdutos />} />
+          <Route path="/pessoas" element={<ListPessoas />} />
+          <Route path="/pessoa" element={<Pessoa />} />
           <Route path="/compras" element={<ListCompras />} />
           <Route path="/compra" element={<Compra />} />
         </Route>

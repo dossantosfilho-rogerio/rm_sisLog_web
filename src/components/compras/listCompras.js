@@ -69,7 +69,7 @@ const carregarCompras = async () => {
         </InputGroup>
         </Col>
       </Row>
-      </Form>
+    </Form>
 
 
   {compras.reduce((rows, element, index) => {
