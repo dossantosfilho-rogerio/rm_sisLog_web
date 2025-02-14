@@ -23,7 +23,6 @@ export const fetchPessoas = async (nome = null, cpfcnpj = null, page = 1, limit 
       const cep = CEP;
       const response = await axiosInstance.post('/createPessoa', {nome, cpfcnpj, telefone, email, logradouro, numero, complemento, cep, cidade, bairro, uf});
     
-      console.log(response);
       return response.data;
       
     } catch (error) {

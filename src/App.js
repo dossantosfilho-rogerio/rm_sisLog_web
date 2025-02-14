@@ -9,6 +9,7 @@ import ListCompras from './components/compras/listCompras';
 import ListPessoas from './components/pessoas/listPessoas';
 import Pessoa from './components/pessoas/Pessoa';
 import Compra from './components/compras/Compra';
+import Produto from './components/produtos/Produto';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/produtos" element={<ListProdutos />} />
+          <Route path="/produto" element={<Produto />} />
           <Route path="/pessoas" element={<ListPessoas />} />
           <Route path="/pessoa" element={<Pessoa />} />
           <Route path="/compras" element={<ListCompras />} />

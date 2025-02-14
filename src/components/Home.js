@@ -42,6 +42,20 @@ const Home = () => {
       </Row>
       <Row style={{marginTop:'15px'}}>
         <Col>
+          <a className='card-hover' href="/rotas">
+          <Card className='card-hover'>
+            <CardHeader>Rotas</CardHeader>
+          </Card>
+          </a>
+        </Col>
+        <Col>
+          <a className='card-hover' href="/categorias">
+          <Card className='card-hover'>
+            <CardHeader>Categorias de Produtos</CardHeader>
+          </Card>
+          </a>
+        </Col>
+        <Col>
           <a className='card-hover' href="/pessoas">
           <Card className='card-hover'>
             <CardHeader>Pessoas (Clientes e Fornecedores)</CardHeader>

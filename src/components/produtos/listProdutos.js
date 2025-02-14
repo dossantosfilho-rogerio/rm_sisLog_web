@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams  } from "react-router-dom";
+import { useNavigate, useSearchParams  } from "react-router-dom";
 import Header from '../../layouts/Header';
 import Produto from './Produto.module.css'
 import { Card, CardBody, CardFooter, CardHeader, Col, Button, Form, InputGroup, Row } from 'react-bootstrap';
 import { fetchProdutos } from './functions';
 const ListProdutos = () => {
+  const navigate = useNavigate();
   const [produtos, setProdutos] = useState([]);
-  const [name, setName] = useState("");
-  const [searchParams] = useSearchParams();
-  const nameParams = searchParams.get("name"); // Obtém o valor do parâmetro "name"
   
+  const [searchParams] = useSearchParams();
+  let nameParams = searchParams.get("name"); // Obtém o valor do parâmetro "name"
+  const [name, setName] = useState(nameParams);
+  const redirecionarAdicionarProduto = () => {
+    navigate('/produto');
+  };
+  useEffect(() => {
+    if (true) {
+      nameParams = searchParams.get("name");
+      setName(nameParams); // Atualiza o input com o valor da URL
+      carregarProdutos(); // Busca os produtos automaticamente
+    }
+  }, []);
+
   const carregarProdutos = async () => {
     try {
       const dados = await fetchProdutos(name);
@@ -21,12 +33,7 @@ const ListProdutos = () => {
 
   
   
-  useEffect(() => {
-    if (nameParams) {
-      setName(nameParams); // Atualiza o input com o valor da URL
-      carregarProdutos(); // Busca os produtos automaticamente
-    }
-  }, [nameParams]);
+  
 
   return (
     <div>
@@ -47,6 +54,7 @@ const ListProdutos = () => {
           <Button onClick={carregarProdutos} variant="outline-success" id="button-addon2">
             Pesquisar
           </Button>
+          <Button onClick={redirecionarAdicionarProduto} variant="success">Adicionar</Button>
         </InputGroup>
         </Col>
       </Row>
