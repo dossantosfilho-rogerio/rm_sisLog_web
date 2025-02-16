@@ -37,7 +37,7 @@ const navigate = useNavigate();
 
     <div>
         <Header />
-        <Card style={{ width: '52rem' , margin: 'auto'}}>
+        <Card style={{ margin: 'auto'}}>
           <CardHeader>Adicionar Produto</CardHeader>
           <Form action="#" onSubmit={handleSubmit}>
 

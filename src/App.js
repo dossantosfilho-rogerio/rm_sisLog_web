@@ -12,6 +12,8 @@ import Compra from './components/compras/Compra';
 import Produto from './components/produtos/Produto';
 import ListCategorias from './components/categorias/listCategorias';
 import Categoria from './components/categorias/Categoria';
+import ListRotas from './components/rotas/listRotas';
+import Rota from './components/rotas/Rota';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/categorias" element={<ListCategorias />} />
           <Route path="/categoria" element={<Categoria />} />
+          <Route path="/rotas" element={<ListRotas />} />
+          <Route path="/rota" element={<Rota />} />
           <Route path="/produtos" element={<ListProdutos />} />
           <Route path="/produto" element={<Produto />} />
           <Route path="/pessoas" element={<ListPessoas />} />

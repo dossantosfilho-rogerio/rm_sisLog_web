@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../layouts/Header';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
-import { fetchFornecedoresOptions, fetchProdutosOptions, createCompra } from './functions';
+import { fetchPessoasOptions, fetchProdutosOptions, createCompra } from './functions';
 import { useNavigate } from 'react-router-dom';
 
 const Compra = () => {
@@ -42,7 +42,7 @@ const Compra = () => {
 
     <div>
         <Header />
-        <Card style={{ width: '52rem' , margin: 'auto'}}>
+        <Card style={{ margin: 'auto'}}>
         <Form action="#" onSubmit={handleSubmit}>
           <CardHeader>
           Adicionar Compra
@@ -55,7 +55,7 @@ const Compra = () => {
                         <Form.Label>Fornecedor</Form.Label>
                         <AsyncSelect
                             cacheOptions
-                            loadOptions={fetchFornecedoresOptions}
+                            loadOptions={fetchPessoasOptions}
                             onChange={setSelectedOption}
                             placeholder="Fornecedor..."
                             defaultOptions

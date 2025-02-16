@@ -32,30 +32,35 @@ const navigate = useNavigate();
   };
 
 
-  const [nome, setNome] = useState([]);
-  const [cpfcnpj, setCpfCnpj] = useState([]);
-  const [telefone, setTelefone] = useState([]);
-  const [email, setEmail] = useState([]);
-  const [logradouro, setLogradouro] = useState([]);
-  const [numero, setNumero] = useState([]);
-  const [complemento, setComplemento] = useState([]);
-  const [CEP, setCEP] = useState([]);
-  const [cidade, setCidade] = useState([]);
-  const [bairro, setBairro] = useState([]);
-  const [uf, setUF] = useState([]);
+  const [nome, setNome] = useState('');
+  const [cpfcnpj, setCpfCnpj] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
+  const [logradouro, setLogradouro] = useState('');
+  const [numero, setNumero] = useState('');
+  const [complemento, setComplemento] = useState('');
+  const [CEP, setCEP] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [bairro, setBairro] = useState('');
+  const [uf, setUF] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const pessoa = await createPessoa(nome, cpfcnpj, telefone, email, logradouro, numero, complemento, CEP, cidade, bairro, uf);
     //setMensagem('Compra adicionada!');
-    navigate(`/pessoas?cpfCnpj=${pessoa.cpfcnpj}`); 
+    if(pessoa.status == 200){
+      navigate(`/pessoas?cpfCnpj=${pessoa.data.cpfcnpj}`); 
+    } else {
+      alert('houve um erro');
+      console.log(pessoa);
+    }
   }
 
   return (
 
     <div>
         <Header />
-        <Card style={{ width: '52rem' , margin: 'auto'}}>
+        <Card style={{ margin: 'auto'}}>
           <CardHeader>Adicionar Pessoa</CardHeader>
           <Form action="#" onSubmit={handleSubmit}>
 
@@ -83,7 +88,7 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="email">
                     <Form.Label>E-Mail</Form.Label>
-                    <Form.Control type="email" name="email" required placeholder="e-mail" value={email} 
+                    <Form.Control type="email" name="email"  placeholder="e-mail" value={email} 
                                   onChange={(e) => setEmail(e.target.value)}/>
                 </Form.Group> 
               </Col>
@@ -101,14 +106,14 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="logradouro">
                     <Form.Label>Logradouro</Form.Label>
-                    <Form.Control type="text" name="logradouro" required placeholder="Logradouro" value={logradouro} 
+                    <Form.Control type="text" name="logradouro"  placeholder="Logradouro" value={logradouro} 
                                   onChange={(e) => setLogradouro(e.target.value)}/>
                 </Form.Group> 
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="numero">
                     <Form.Label>Número</Form.Label>
-                    <Form.Control type="text" name="numero" required placeholder="Número" value={numero} 
+                    <Form.Control type="text" name="numero"  placeholder="Número" value={numero} 
                                   onChange={(e) => setNumero(e.target.value)}/>
                 </Form.Group> 
               </Col>
@@ -117,7 +122,7 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="complemento">
                     <Form.Label>Complemento</Form.Label>
-                    <Form.Control type="text" name="complemento" required placeholder="Complemento" value={complemento} 
+                    <Form.Control type="text" name="complemento" placeholder="Complemento" value={complemento} 
                                   onChange={(e) => setComplemento(e.target.value)}/>
                 </Form.Group> 
               </Col>
@@ -126,14 +131,14 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="bairro">
                     <Form.Label>Bairro</Form.Label>
-                    <Form.Control type="text" name="bairro" required placeholder="Bairro" value={bairro} 
+                    <Form.Control type="text" name="bairro"  placeholder="Bairro" value={bairro} 
                                   onChange={(e) => setBairro(e.target.value)}/>
                 </Form.Group> 
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="Cidade">
                     <Form.Label>Cidade</Form.Label>
-                    <Form.Control type="text" name="cidade" required placeholder="Cidade" value={cidade} 
+                    <Form.Control type="text" name="cidade"  placeholder="Cidade" value={cidade} 
                                   onChange={(e) => setCidade(e.target.value)}/>
                 </Form.Group> 
               </Col>
@@ -142,14 +147,14 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="uf">
                     <Form.Label>UF</Form.Label>
-                    <Form.Control type="text" name="uf" required placeholder="UF" value={uf} 
+                    <Form.Control type="text" name="uf"  placeholder="UF" value={uf} 
                                   onChange={(e) => setUF(e.target.value)}/>
                 </Form.Group> 
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="CEP">
                     <Form.Label>CEP</Form.Label>
-                    <Form.Control type="text" name="CEP" required placeholder="CEP" value={CEP} 
+                    <Form.Control type="text" name="CEP"  placeholder="CEP" value={CEP} 
                                   onChange={(e) => setCEP(e.target.value)}/>
                 </Form.Group> 
               </Col>

@@ -17,7 +17,7 @@ export const fetchCompras = async (numero_documento = null, fornecedor = null, p
     }
   };
 
-  export const fetchFornecedoresOptions = async (inputValue) => {
+  export const fetchPessoasOptions = async (inputValue) => {
     if (!inputValue) return [];
   
     try {

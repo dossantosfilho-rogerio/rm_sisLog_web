@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from '../../layouts/Header';
 import './Compra.module.css';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Container, Form, InputGroup, Row, Tab, Table } from 'react-bootstrap';
-import { fetchCompras, fetchFornecedoresOptions } from './functions';
+import { fetchCompras, fetchPessoasOptions } from './functions';
 import AsyncSelect, { useAsync } from 'react-select/async';
 const ListCompras = () => {
 const navigate = useNavigate();
@@ -44,7 +44,7 @@ const carregarCompras = async () => {
             
         <AsyncSelect
                 cacheOptions
-                loadOptions={fetchFornecedoresOptions}
+                loadOptions={fetchPessoasOptions}
                 onChange={setSelectedOption}
                 placeholder="Fornecedor..."
                 defaultOptions
