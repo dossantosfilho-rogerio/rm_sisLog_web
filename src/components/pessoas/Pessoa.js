@@ -48,7 +48,7 @@ const navigate = useNavigate();
     event.preventDefault();
     const pessoa = await createPessoa(nome, cpfcnpj, telefone, email, logradouro, numero, complemento, CEP, cidade, bairro, uf);
     //setMensagem('Compra adicionada!');
-    navigate(`/pessoas?cpfcnpj=${pessoa.cpfcnpj}`); 
+    navigate(`/pessoas?cpfCnpj=${pessoa.cpfcnpj}`); 
   }
 
   return (

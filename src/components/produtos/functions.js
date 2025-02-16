@@ -18,8 +18,10 @@ export const fetchProdutos = async (nome = null, page = 1, limit = 9, categoria 
   };
 
 
-  export const createProduto = async (nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria_id) => {    
+  export const createProduto = async (nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria) => {    
+
     try {
+      const categoria_id = categoria.value
       const response = await axiosInstance.post('/createProduto', {nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria_id});
     //console.log(response);
       return response;

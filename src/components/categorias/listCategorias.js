@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams  } from "react-router-dom";
 import Header from '../../layouts/Header';
-import Produto from './Produto.module.css'
+import Categoria from './Categoria.module.css'
 import { Card, CardBody, CardFooter, CardHeader, Col, Button, Form, InputGroup, Row } from 'react-bootstrap';
-import { fetchProdutos } from './functions';
-const ListProdutos = () => {
+import { fetchCategorias } from './functions';
+const ListCategorias = () => {
   const navigate = useNavigate();
-  const [produtos, setProdutos] = useState([]);
+  const [Categorias, setCategorias] = useState([]);
   
   const [searchParams] = useSearchParams();
   const nameParams = searchParams.get("nome"); // Obtém o valor do parâmetro "nome"
   const [name, setName] = useState(nameParams);
-  const redirecionarAdicionarProduto = () => {
-    navigate('/produto');
+  const redirecionarAdicionarCategorias = () => {
+    navigate('/categoria');
   };
   useEffect(() => {
     if (true) {
       setName(nameParams); // Atualiza o input com o valor da URL
-      carregarProdutos(); // Busca os produtos automaticamente
+      carregarCategorias(); // Busca os Categorias automaticamente
     }
   }, []);
 
-  const carregarProdutos = async () => {
+  const carregarCategorias = async () => {
     try {
-      const dados = await fetchProdutos(name);
-      setProdutos(dados.data); // Atualiza o estado com os produtos
+      const dados = await fetchCategorias(name);
+      setCategorias(dados.data); // Atualiza o estado com os Categorias
     } catch (error) {
-      console.error("Erro ao carregar produtos:", error);
+      console.error("Erro ao carregar categorias de Categorias:", error);
     }
   };
 
@@ -44,22 +44,22 @@ const ListProdutos = () => {
           <InputGroup>
           <Form.Control
             name="name"
-            placeholder="Nome do Produto"
-            aria-label="Nome do Produto"
+            placeholder="Nome do Categorias"
+            aria-label="Nome do Categorias"
             aria-describedby="basic-addon2"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <Button onClick={carregarProdutos} variant="outline-success" id="button-addon2">
+          <Button onClick={carregarCategorias} variant="outline-success" id="button-addon2">
             Pesquisar
           </Button>
-          <Button onClick={redirecionarAdicionarProduto} variant="success">Adicionar</Button>
+          <Button onClick={redirecionarAdicionarCategorias} variant="success">Adicionar</Button>
         </InputGroup>
         </Col>
       </Row>
       </Form>
-      {produtos.reduce((rows, element, index) => {
-        // A cada 3 produtos, adicionamos um novo Row
+      {Categorias.reduce((rows, element, index) => {
+        // A cada 3 Categorias, adicionamos um novo Row
         if (index % 3 === 0) rows.push([]);
         rows[rows.length - 1].push(element);
         return rows;
@@ -67,20 +67,14 @@ const ListProdutos = () => {
         <Row style={{ marginTop: '15px' }} key={rowIndex}>
           {row.map((element) => (
             <Col key={element.id} sm={4}> {/* O sm={4} divide a largura em 3 partes */}
-              <a className="card-hover" href={`/produto/${element.id}`}>
-                <Card className={Produto.card}>
+              <a className="card-hover" href={`/categoria/${element.id}`}>
+                <Card className={Categoria.card}>
                   <CardHeader>{element.nome}</CardHeader>
-                  <CardBody className={Produto.cardbody}>{element.descricao}</CardBody>
+                  <CardBody className={Categoria.cardbody}>Quantidade de Produtos: {element.produtos_count}</CardBody>
                   <CardFooter>
                     <Row>
                       <Col>
-                      Preço de Custo: {Number(element.preco_custo).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                      </Col>
-                      <Col>
-                      Preço de Venda: {Number(element.preco_venda).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                      </Col>
-                      <Col>
-                      Estoque: {element.estoque}
+                      Total em Estoque: {Number(element.produtos_sum_estoque)}
                       </Col>
                     </Row>
                     
@@ -95,4 +89,4 @@ const ListProdutos = () => {
   );
 };
 
-export default ListProdutos;
+export default ListCategorias;

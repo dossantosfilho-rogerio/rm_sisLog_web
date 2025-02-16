@@ -10,6 +10,8 @@ import ListPessoas from './components/pessoas/listPessoas';
 import Pessoa from './components/pessoas/Pessoa';
 import Compra from './components/compras/Compra';
 import Produto from './components/produtos/Produto';
+import ListCategorias from './components/categorias/listCategorias';
+import Categoria from './components/categorias/Categoria';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/categorias" element={<ListCategorias />} />
+          <Route path="/categoria" element={<Categoria />} />
           <Route path="/produtos" element={<ListProdutos />} />
           <Route path="/produto" element={<Produto />} />
           <Route path="/pessoas" element={<ListPessoas />} />

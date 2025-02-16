@@ -8,14 +8,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 const ListPessoas = () => {
 
 const [pessoas, setPessoas] = useState([]);
-const [nome, setNome] = useState([]);
-const [cpfcnpj, setCpfCnpj] = useState([]);
+const [nome, setNome] = useState('');
+const [cpfcnpj, setCpfCnpj] = useState('');
 const [searchParam] = useSearchParams();
+const cpfCnpjParams = searchParam.get("cpfCnpj"); // Obtém o valor do parâmetro "cpfCnpj"
 const navigate = useNavigate();
 
 const carregarPessoas = async () => {
     try {
-      const dados = await fetchPessoas(nome, cpfcnpj);
+      const dados = await fetchPessoas(nome, cpfCnpjParams);
       setPessoas(dados);
     } catch (error) {
       console.error("Erro ao carregar Pessoas:", error);
@@ -26,17 +27,21 @@ const carregarPessoas = async () => {
     navigate("/pessoa");
 };
 
-useEffect(() => {
-    setNome(searchParam.get("nome"));
-    setCpfCnpj(searchParam.get('cpfcnpj'));
+    
+  useEffect(() => {
     carregarPessoas();
-    }, []);
+}, [cpfcnpj]); 
+
+useEffect(() => {
+  setCpfCnpj(cpfCnpjParams);
+  console.log(cpfCnpjParams);
+}, [cpfCnpjParams]); 
 
     return (
         <div>
         <Header />
       
-        <Form action="#">
+        <Form action="#" onSubmit={carregarPessoas}>
             <Row style={{ margin: '10px' }}>
               <Col>
                   
@@ -52,14 +57,14 @@ useEffect(() => {
               <Col>
                 <InputGroup>
                 <Form.Control
-                  name="cpfcnpj"
+                  name="cpfCnpj"
                   placeholder="CpfCnpj"
                   aria-label="CpfCnpj"
                   aria-describedby="basic-addon2"
                   value={cpfcnpj}
                   onChange={(e) => setCpfCnpj(e.target.value)}
                 /> 
-                <Button onClick={carregarPessoas} variant="outline-primary" id="button-addon2">
+                <Button onClick={carregarPessoas} type="submit" variant="outline-primary" id="button-addon2">
                   Pesquisar
                 </Button>
                 <Button onClick={redirecionarAdicionarPessoa} variant="success">Adicionar</Button>

@@ -3,6 +3,8 @@ import Header from '../../layouts/Header';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
  import { createProduto } from './functions';
+import AsyncSelect from 'react-select/async';
+import { fetchCategoriasOptions } from '../categorias/functions';
 
 
 const Produto = () => {
@@ -15,7 +17,7 @@ const navigate = useNavigate();
   const [preco_custo, setPreco_custo] = useState([]);
   const [percentual_comissao, setPercentual_comissao] = useState([]);
   const [estoque, setEstoque] = useState(0);
-  const [categoria_id, setCategoria_id] = useState([]);
+  const [categoria_id, setSelectedOption] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -93,8 +95,14 @@ const navigate = useNavigate();
               <Col>
                 <Form.Group className="mb-3" controlId="categoria_id">
                     <Form.Label>Categoria</Form.Label>
-                    <Form.Control type="text" name="categoria_id" required placeholder="Categoria" value={categoria_id} 
-                                  onChange={(e) => setCategoria_id(e.target.value)}/>
+                    <AsyncSelect
+                        cacheOptions
+                        loadOptions={fetchCategoriasOptions}
+                        onChange={setSelectedOption}
+                        placeholder="Categoria..."
+                        defaultOptions
+                        isClearable
+                    />
                 </Form.Group> 
               </Col>
             </Row>
