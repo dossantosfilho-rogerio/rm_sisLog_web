@@ -33,15 +33,14 @@ export const fetchCategorias = async (nome = null, page = 1, limit = 9) => {
 
 
 
-  export const createCategoria = async (nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria_id) => {    
+  export const createCategoria = async (nome) => {    
     try {
-      const categoria = categoria_id.value;
-      const response = await axiosInstance.post('/createCategoria', {nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria});
+      const response = await axiosInstance.post('/createCategoria', {nome});
     //console.log(response);
       return response;
       
     } catch (error) {
-      console.error("Erro ao incluir o produto:", error);
+      console.error("Erro ao incluir a categoria:", error);
       return [];
     }
   };

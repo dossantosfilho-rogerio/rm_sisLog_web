@@ -11,6 +11,7 @@
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-input-mask": "^3.0.0-alpha.2",
+    "react-number-format": "^5.4.3",
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "react-select": "^5.10.0",

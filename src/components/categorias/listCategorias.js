@@ -26,7 +26,7 @@ const ListCategorias = () => {
       const dados = await fetchCategorias(name);
       setCategorias(dados.data); // Atualiza o estado com os Categorias
     } catch (error) {
-      console.error("Erro ao carregar categorias de Categorias:", error);
+      console.error("Erro ao carregar Categorias de Produtos:", error);
     }
   };
 

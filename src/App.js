@@ -14,6 +14,8 @@ import ListCategorias from './components/categorias/listCategorias';
 import Categoria from './components/categorias/Categoria';
 import ListRotas from './components/rotas/listRotas';
 import Rota from './components/rotas/Rota';
+import ListVendas from './components/vendas/listVendas';
+import Venda from './components/vendas/Venda';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/vendas" element={<ListVendas />} />
+          <Route path="/venda" element={<Venda />} />
           <Route path="/categorias" element={<ListCategorias />} />
           <Route path="/categoria" element={<Categoria />} />
           <Route path="/rotas" element={<ListRotas />} />

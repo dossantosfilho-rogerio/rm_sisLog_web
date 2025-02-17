@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from '../../layouts/Header';
-import './Compra.module.css';
+import './Venda.module.css';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Container, Form, InputGroup, Row, Tab, Table } from 'react-bootstrap';
-import { fetchCompras, fetchPessoasOptions } from './functions';
+import { fetchVendas, fetchPessoasOptions, fetchRotasOptions } from './functions';
 import AsyncSelect, { useAsync } from 'react-select/async';
-const ListCompras = () => {
+const ListVendas = () => {
 const navigate = useNavigate();
-const [compras, setCompras] = useState([]);
+const [vendas, setVendas] = useState([]);
 const [numero_documento, setNumeroDocumento] = useState([]);
-const [selectedOption, setSelectedOption] = useState(null);
+const [cliente, setCliente] = useState(null);
+const [rota, setRota] = useState(null);
 const [searchParams] = useSearchParams();
 const numero_documentoParams = searchParams.get("numero_documento"); // Obtém o valor do parâmetro "numero_documento"
 
-const redirecionarAdicionarCompra = () => {
-    navigate("/compra");
+const redirecionarAdicionarVenda = () => {
+    navigate("/venda");
 };
 
-const carregarCompras = async () => {
+const carregarVendas = async () => {
     try {
-      const dados = await fetchCompras(numero_documentoParams, selectedOption);
-      setCompras(dados.data);
+      const dados = await fetchVendas(numero_documentoParams, cliente, rota);
+      setVendas(dados.data);
     } catch (error) {
-      console.error("Erro ao carregar Compras:", error);
+      console.error("Erro ao carregar Vendas:", error);
     }
   };
 
   useEffect(() => {
       if (numero_documentoParams) {
         setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
-        carregarCompras();
+        carregarVendas();
       }
     }, [numero_documentoParams]);
   
@@ -38,15 +39,27 @@ const carregarCompras = async () => {
     <div>
   <Header />
 
-  <Form action="#" onSubmit={carregarCompras}>
+  <Form action="#" onSubmit={carregarVendas}>
       <Row style={{ margin: '10px' }}>
         <Col>
             
         <AsyncSelect
                 cacheOptions
                 loadOptions={fetchPessoasOptions}
-                onChange={setSelectedOption}
-                placeholder="Fornecedor..."
+                onChange={setCliente}
+                placeholder="Cliente..."
+                defaultOptions
+                isClearable
+            />
+             
+        </Col>
+        <Col>
+            
+        <AsyncSelect
+                cacheOptions
+                loadOptions={fetchRotasOptions}
+                onChange={setRota}
+                placeholder="Rota..."
                 defaultOptions
                 isClearable
             />
@@ -62,18 +75,18 @@ const carregarCompras = async () => {
             value={numero_documento}
             onChange={(e) => setNumeroDocumento(e.target.value)}
           /> 
-          <Button onClick={carregarCompras} type="submit" variant="outline-primary" id="button-addon2">
+          <Button onClick={carregarVendas} type="submit" variant="outline-primary" id="button-addon2">
             Pesquisar
           </Button>
-          <Button onClick={redirecionarAdicionarCompra} variant="success">Adicionar</Button>
+          <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
         </InputGroup>
         </Col>
       </Row>
     </Form>
 
 
-  {compras.reduce((rows, element, index) => {
-    // A cada 2 compras, adicionamos um novo Row
+  {vendas.reduce((rows, element, index) => {
+    // A cada 2 vendas, adicionamos um novo Row
     if (index % 2 === 0) rows.push([]);
     rows[rows.length - 1].push(element);
     return rows;
@@ -81,11 +94,14 @@ const carregarCompras = async () => {
     <Row style={{ marginTop: '15px' }} key={rowIndex}>
       {row.map((element) => (
         <Col key={element.id} sm={6}> {/* O sm={6} divide a largura em 2 partes */}
-          <a className="card-hover" href={`/compra/${element.id}`}>
+          <a className="card-hover" href={`/venda/${element.id}`}>
             <Card>
-              <CardHeader>Compra #{element.id}#</CardHeader>
+              <CardHeader>Venda #{element.id}#</CardHeader>
               <CardBody>
-                <p>Fornecedor: {element.pessoa.nome}</p>
+                <p>Cliente: {element.cliente.nome}</p>
+                {element.Rota && (
+                  <p><strong>Rota:</strong> {element.rota.título} - placa: {element.rota.placa_veiculo} - {element.rota.status}</p>
+                )}
                 <Card>
                   <CardHeader>Produtos</CardHeader>
                   <CardBody style={{ maxHeight: '300px', overflowY: 'auto' }}> 
@@ -100,7 +116,7 @@ const carregarCompras = async () => {
                     </thead>
                     <tbody>
                     {
-                      element.itens_compra.map((e) => (  
+                      element.itens_venda.map((e) => (  
                         <tr>
                             <td>
                                 {e.produto.nome}
@@ -128,7 +144,7 @@ const carregarCompras = async () => {
                     Valor Total: {Number(element.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </Col>
                   <Col>
-                    Data Compra: {new Date(element.data_compra).toLocaleDateString('pt-BR')}
+                    Data Venda: {new Date(element.data_venda).toLocaleDateString('pt-BR')}
                   </Col>
                 </Row>
               </CardFooter>
@@ -142,4 +158,4 @@ const carregarCompras = async () => {
   );
 };
 
-export default ListCompras;
+export default ListVendas;
