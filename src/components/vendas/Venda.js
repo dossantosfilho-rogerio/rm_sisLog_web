@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../../layouts/Header';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row, Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
-import { fetchPessoasOptions, fetchProdutosOptions, createVenda, fetchRotasOptions } from './functions';
+import { fetchPessoasOptions, fetchProdutosOptions, createVenda, fetchRotasOptions, fetchVendas, existVenda } from './functions';
 import { useNavigate } from 'react-router-dom';
 import ModalProduto from  '../produtos/modalProduto'
 
@@ -11,13 +11,14 @@ const Venda = () => {
   const [vendedor, setVendedor] = useState(null);
   const [data_venda, setDataVenda] = useState(new Date().toISOString().split("T")[0]);
   const [produtos, setProdutos] = useState([]);
+  const [numero_documento, setNumeroDocumento] = useState(null);
   const [rota, setRota] = useState(null);
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const venda = await createVenda(selectedOptionCliente, vendedor, rota, data_venda, produtos);
+    const venda = await createVenda(selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos);
     //setMensagem('Venda adicionada!');
     if(venda.status == 200){
       navigate(`/vendas?numero_documento=${venda.data.id}`); 
@@ -44,6 +45,13 @@ const Venda = () => {
     novoProduto.nome = `Produto ${produtos.length + 1}`;
     setProdutos([...produtos, novoProduto]);
 };
+
+  const checkNumeroDocumento = async () => {
+    const retorno = await existVenda(null, numero_documento);
+    if(retorno){
+      alert('Nota '+ numero_documento + ' já cadastrada.');
+    }
+  };
 
 
 
@@ -89,6 +97,13 @@ const Venda = () => {
                             isClearable
                             required
                         />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="vendedor">
+                        <Form.Label>Número da Nota</Form.Label>
+                        <Form.Control type="text" name="numero_documento" required placeholder="Número da Nota" value={numero_documento} 
+                                      onChange={(e) => setNumeroDocumento(e.target.value)} onBlur={checkNumeroDocumento}/>
                     </Form.Group>
                   </Col>
                 </Row>
