@@ -1,35 +1,49 @@
 import React, { useState } from 'react';
 import Header from '../../layouts/Header';
-import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row, Table } from 'react-bootstrap';
+import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Nav, Row, Tab, Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import { fetchPessoasOptions, fetchProdutosOptions, createVenda, fetchRotasOptions, fetchVendas, existVenda } from './functions';
 import { useNavigate } from 'react-router-dom';
-import ModalProduto from  '../produtos/modalProduto'
+import ModalProduto from  '../produtos/modalProduto';
+import ModalContaAReceber from  '../contasareceber/modalContaAReceber';
 
 const Venda = () => {
   const [selectedOptionCliente, setSelectedOption] = useState(null);
   const [vendedor, setVendedor] = useState(null);
   const [data_venda, setDataVenda] = useState(new Date().toISOString().split("T")[0]);
   const [produtos, setProdutos] = useState([]);
+  const [contasAReceber, setContasAReceber] = useState([]);
   const [numero_documento, setNumeroDocumento] = useState(null);
   const [rota, setRota] = useState(null);
   const [total, setTotal] = useState(0);
+  const [totalConta, setTotalConta] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const venda = await createVenda(selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos);
-    //setMensagem('Venda adicionada!');
-    if(venda.status == 200){
-      navigate(`/vendas?numero_documento=${venda.data.id}`); 
-    } else {
-      alert('houve um erro');
-      console.log(rota);
+    let resposta = true;
+    if(totalConta != total){
+      resposta = window.confirm("Total das contas a receber não confere com total dos produtos. Prosseguir assim mesmo?");
+    }
+    if(resposta){
+      const venda = await createVenda(selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber);
+      //setMensagem('Venda adicionada!');
+      if(venda.status == 200){
+        navigate(`/vendas?numero_documento=${venda.data.id}`); 
+      } else {
+        alert('houve um erro');
+        console.log(rota);
+      }  
     }
   }
   const removerProdutoList = (produto_aux) => {
     setProdutos(produtos.filter(produto => produto !== produto_aux));
     setTotal(Number(total) - (Number(produto_aux.quantidade) * Number(produto_aux.preco_unitario)));
+  };
+
+  const removerContaList = (conta_aux) => {
+    setContasAReceber(contasAReceber.filter(conta => conta !== conta_aux));
+    setTotalConta(Number(totalConta) - (Number(conta_aux.valor)));
   };
 
   const produtoChange = (id, field, valor) => {
@@ -44,6 +58,13 @@ const Venda = () => {
     novoProduto.id = Date.now();
     novoProduto.nome = `Produto ${produtos.length + 1}`;
     setProdutos([...produtos, novoProduto]);
+};
+
+const adicionarContaList = (novaConta) => {
+  setTotalConta(Number(totalConta) + (Number(novaConta.valor)));
+  novaConta.id = Date.now();
+  novaConta.nome = `Conta a Receber ${produtos.length + 1}`;
+  setContasAReceber([...contasAReceber, novaConta]);
 };
 
   const checkNumeroDocumento = async () => {
@@ -130,14 +151,83 @@ const Venda = () => {
 
                   </Col>
                 </Row>
-                <Row>
+                <Tab.Container defaultActiveKey="Produtos">
+                  <Nav variant="tabs" defaultActiveKey="Produtos">
+          <Nav.Item>
+            <Nav.Link eventKey="Produtos" >Produtos</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="ContasAReceber">Contas A Receber</Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <Tab.Content>
+        <Tab.Pane eventKey="ContasAReceber">
+          <Row>
                   <Col>
                     <Card>
                       <CardHeader>
                         <Row>
                           <Col>
-                            Produtos
+                            <ModalContaAReceber onContaAdicionada={adicionarContaList} />
                           </Col>
+                        </Row>
+                      
+                      </CardHeader>
+                      <CardBody>
+                        <Table striped bordered hover>
+                          <thead>
+                          <tr>
+                            <td>
+                              Valor
+                            </td>
+                            <td>
+                              Data Vencimento
+                            </td>
+                            <td>
+                              Remover
+                            </td>
+                          </tr>
+                          </thead>
+                          <tbody>
+                            {contasAReceber.map((conta) => (
+                                <tr key={conta.id}>
+                                  <td>
+                                    {Number(conta.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </td>
+                                  <td>
+                                    {new Date(conta.data_vencimento).toLocaleDateString('pt-BR')}
+                                  </td>
+                                  <td>
+                                  <Button onClick={() => removerContaList(conta)}
+                                variant="danger" id="button-remover3">
+                                            <i className='bi bi-dash-square'></i> Remover Conta a Receber
+                                          </Button>
+                                  </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </Table>
+                      </CardBody>
+                      <CardFooter>
+                        <Row>
+                        <Col>
+                        Total: {Number(totalConta).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        </Col>
+                        </Row>
+                        
+                          
+                      </CardFooter>
+                    </Card>
+                  </Col>
+                </Row>
+        </Tab.Pane>
+        <Tab.Pane eventKey="Produtos">
+          
+                <Row>
+                  <Col>
+                    <Card>
+                      <CardHeader>
+                        <Row>
                           <Col>
                             <ModalProduto onProdutoAdicionado={adicionarProdutoList} />
                           </Col>
@@ -203,6 +293,9 @@ const Venda = () => {
                     </Card>
                   </Col>
                 </Row>
+                </Tab.Pane>
+                </Tab.Content>
+                </Tab.Container>
           </CardBody>
           <CardFooter>
             <Button type="submit" variant="outline-primary" id="button-addon2">
