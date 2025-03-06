@@ -3,6 +3,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./components/Home";
+import { useEffect } from "react";
 import ListProdutos from "./components/produtos/listProdutos";
 import ProtectedRoute from "./components/ProtectedRoute"; // Componente de Rota Protegida
 import ListCompras from './components/compras/listCompras';
@@ -16,8 +17,13 @@ import ListRotas from './components/rotas/listRotas';
 import Rota from './components/rotas/Rota';
 import ListVendas from './components/vendas/listVendas';
 import Venda from './components/vendas/Venda';
+import ListContasAReceber from './components/contasareceber/listContasAReceber';
 
 function App() {
+  useEffect(() => {
+    document.title = "Distribuidora RMTripas";
+  }, []);
+
   return (
     
     <Router>
@@ -26,6 +32,7 @@ function App() {
         
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/contasareceber" element={<ListContasAReceber />} />
           <Route path="/vendas" element={<ListVendas />} />
           <Route path="/venda" element={<Venda />} />
           <Route path="/categorias" element={<ListCategorias />} />

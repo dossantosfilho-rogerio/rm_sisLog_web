@@ -1,22 +1,44 @@
 import React, { useState } from 'react';
 import Header from '../../layouts/Header';
-import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
+import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row, Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
-import { fetchPessoasOptions, fetchProdutosOptions, createCompra } from './functions';
+import ModalProduto from  '../produtos/modalProduto';
+import { fetchPessoasOptions, fetchProdutosOptions, createCompra, existCompra } from './functions';
 import { useNavigate } from 'react-router-dom';
 
 const Compra = () => {
   const [selectedOptionFornecedor, setSelectedOption] = useState(null);
   const [data_compra, setDataCompra] = useState([]);
   const [produtos, setProdutos] = useState([]);
+  const [numero_nota, setNumeroNota] = useState(null);
+    const [total, setTotal] = useState(0);
   const navigate = useNavigate();
-  let total = 0;
+
+  const checkNumeroNota = async () => {
+    const retorno = await existCompra(null, numero_nota);
+    if(retorno){
+      alert('Nota '+ numero_nota + ' já cadastrada.');
+    }
+  };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const compra = await createCompra(selectedOptionFornecedor, data_compra, produtos);
-    //setMensagem('Compra adicionada!');
-    navigate(`/compras?numero_documento=${compra.id}`); 
+    try{
+      const compra = await createCompra(selectedOptionFornecedor, data_compra, numero_nota, produtos);
+      //setMensagem('Compra adicionada!');
+      if(compra.status == 200){
+        navigate(`/compras?numero_documento=${compra.id}`); 
+      } else {
+        alert('houve um erro');
+        console.log(compra);
+      }  
+  
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
+    
   }
   const removerProdutoList = (produto_aux) => {
     setProdutos(produtos.filter(produto => produto !== produto_aux));
@@ -29,8 +51,10 @@ const Compra = () => {
       ));
   };
 
-  const adicionarProdutoList = () => {
-    const novoProduto = { id: Date.now(), nome: `Produto ${produtos.length + 1}`, produto_id: "", quantidade: "", preco_unitario: "" };
+  const adicionarProdutoList = (novoProduto) => {
+    setTotal(Number(total) + (Number(novoProduto.quantidade) * Number(novoProduto.preco_unitario)));
+    novoProduto.id = Date.now();
+    novoProduto.nome = `Produto ${produtos.length + 1}`;
     setProdutos([...produtos, novoProduto]);
 };
 
@@ -67,6 +91,14 @@ const Compra = () => {
                 </Row>
                 <Row>
                   <Col>
+                    <Form.Group className="mb-3" controlId="numeroNota">
+                        <Form.Label>Número da Nota</Form.Label>
+                        <Form.Control type="text" name="numero_nota" required placeholder="Número da Nota" value={numero_nota} 
+                                      onChange={(e) => setNumeroNota(e.target.value)} onBlur={checkNumeroNota}/>
+                    </Form.Group>
+                  </Col>
+                  
+                  <Col>
                   <Form.Group className="mb-3" controlId="data_compra">
                         <Form.Label>Data da Compra</Form.Label>
                         <Form.Control type="date" name="data_compra" required placeholder="Data da Compra" value={data_compra} 
@@ -76,73 +108,72 @@ const Compra = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
-                    <Card>
+                <Card>
                       <CardHeader>
                         <Row>
                           <Col>
-                            Produtos
+                            <ModalProduto onProdutoAdicionado={adicionarProdutoList} />
                           </Col>
                         </Row>
                       
                       </CardHeader>
                       <CardBody>
+                        <Table striped bordered hover>
+                          <thead>
+                          <tr>
+                            <td>
+                              Nome
+                            </td>
+                            <td>
+                              Qtd.
+                            </td>
+                            <td>
+                              Preço Venda
+                            </td>
+                            <td>
+                              Total
+                            </td>
+                            <td>
+                              Remover
+                            </td>
+                          </tr>
+                          </thead>
+                          <tbody>
                             {produtos.map((produto) => (
-                                <Card key={produto.id} className="mb-2">
-                                    <CardBody>
-                                    <Form.Group className="mb-3" controlId="produto_id">
-                                        <Form.Label>Produto</Form.Label>
-                                        <AsyncSelect
-                                            cacheOptions
-                                            loadOptions={fetchProdutosOptions}
-                                            onChange={(e) => produtoChange(produto.id, 'produto_id', e.value)}
-                                            placeholder="Produto..."
-                                            defaultOptions
-                                            isClearable
-                                            required
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="quantidade">
-                                                    <Form.Label>Quantidade</Form.Label>
-                                                    <Form.Control type="number" name="quantidade" required placeholder="Quantidade" value={produto.quantidade} 
-                                                  onChange={(e) => produtoChange(produto.id, 'quantidade', e.target.value)}/>
-                                                </Form.Group>
-                                    <Form.Group className="mb-3" controlId="preco_unitario">
-                                        <Form.Label>Preço Unitário</Form.Label>
-                                        <Form.Control type="number" name="preco_unitario" required placeholder="Preço Unitário" value={produto.preco_unitario} 
-                                      onChange={(e) => produtoChange(produto.id, 'preco_unitario', e.target.value)}/>
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="total">
-                                        <Form.Label>Valor Total do Item</Form.Label>
-                                        <Form.Control type="text" readOnly name="total" required placeholder="Total" value={Number(produto.preco_unitario * produto.quantidade).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})} 
-                                      />
-                                    </Form.Group>
-                                    </CardBody>
-                                    <CardFooter>
-                                    <Button onClick={() => removerProdutoList(produto)}
-                                      variant="danger" id="button-remover2">
-                                                  <i className='bi bi-dash-square'></i> Remover Produto
-                                                </Button>
-                                    </CardFooter>
-                                </Card>
+                                <tr key={produto.id}>
+                                  <td>
+                                    {produto.produto_nome}
+                                  </td>
+                                  <td>
+                                    {produto.quantidade}
+                                  </td>
+                                  <td>
+                                    {Number(produto.preco_unitario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </td>
+                                  <td>
+                                    {Number(Number(produto.quantidade) * Number(produto.preco_unitario)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </td>
+                                  <td>
+                                  <Button onClick={() => removerProdutoList(produto)}
+                                variant="danger" id="button-remover2">
+                                            <i className='bi bi-dash-square'></i> Remover Produto
+                                          </Button>
+                                  </td>
+                                </tr>
                             ))}
+                            </tbody>
+                        </Table>
                       </CardBody>
                       <CardFooter>
                         <Row>
                         <Col>
                         Total: {Number(total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </Col>
-                          <Col>
-                          <Button onClick={adicionarProdutoList} variant="success" id="button-addon2">
-                                                  <i className='bi bi-plus-square'></i> Adicionar Produto
-                                                </Button>
-                          </Col>
                         </Row>
                         
                           
                       </CardFooter>
                     </Card>
-                  </Col>
                 </Row>
           </CardBody>
           <CardFooter>

@@ -50,18 +50,34 @@ export const fetchCompras = async (numero_documento = null, fornecedor = null, p
   };
 
 
-  export const createCompra = async (fornecedor_id, data_compra, produtos) => {
-    if (produtos.length <= 0) throw new Error("Necessário ao menos um produto.");
-    
-  
+  export const createCompra = async (fornecedor_id, data_compra, numero_nota, produtos) => {
+    if (produtos.length <= 0) {
+      throw new Error("Necessário ao menos um produto.");
+    }
     try {
       let pessoa_id = fornecedor_id.value;
-      const response = await axiosInstance.post(`/createCompra`, { pessoa_id, data_compra, produtos });
-      return response.data;
+      const response = await axiosInstance.post(`/createCompra`, { pessoa_id, data_compra, numero_nota, produtos });
+      return response;
       
     } catch (error) {
-      console.error("Erro ao incluir a compra:", error);
-      return [];
+      throw error;
     }
   };
+
+
+  export const existCompra = async (id = null, numero_documento = null) => {
+    //retorna vendas cujo parâmetros são exatos ao da busca.
+    try {
+      const response = await axiosInstance.get('/existCompra', {
+        params: {
+            id: id,
+            numero_nota: numero_documento,
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
   

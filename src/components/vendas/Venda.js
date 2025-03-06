@@ -32,7 +32,7 @@ const Venda = () => {
         navigate(`/vendas?numero_documento=${venda.data.id}`); 
       } else {
         alert('houve um erro');
-        console.log(rota);
+        console.log(venda);
       }  
     }
   }
