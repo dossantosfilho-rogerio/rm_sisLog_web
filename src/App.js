@@ -39,6 +39,7 @@ function App() {
           <Route path="/categoria" element={<Categoria />} />
           <Route path="/rotas" element={<ListRotas />} />
           <Route path="/rota" element={<Rota />} />
+          <Route path="/rota/:id" element={<Rota />} />
           <Route path="/produtos" element={<ListProdutos />} />
           <Route path="/produto" element={<Produto />} />
           <Route path="/pessoas" element={<ListPessoas />} />

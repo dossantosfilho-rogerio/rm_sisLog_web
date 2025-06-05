@@ -17,6 +17,20 @@ export const fetchRotas = async (titulo = null, placa = null, data = null, page 
     }
   };
 
+  export const getRota = async (id) => {
+    try {
+      const response = await axiosInstance.get('/getRota', {
+        params: {
+          id: id,
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar opções:", error);
+      return [];
+    }
+  };
+
   export const fetchCategoriasOptions = async (inputValue) => {
     if (!inputValue) return [];
   

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../layouts/Header';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
- import { createRota } from './functions';
+ import { createRota, getRota } from './functions';
  import { fetchPessoasOptions } from '../compras/functions';
 import AsyncSelect from 'react-select/async';
 
@@ -10,7 +10,7 @@ import AsyncSelect from 'react-select/async';
 const Rota = () => {
 const navigate = useNavigate();
 
-
+  const { id } = useParams();
   const [titulo, setTitulo] = useState([]);
   const [descricao, setDescricao] = useState([]);
   const [data_retorno, setDataRetorno] = useState('');
@@ -32,6 +32,26 @@ const navigate = useNavigate();
     //setMensagem('Compra adicionada!');
     
   }
+
+ useEffect(() => {
+    if (id) {
+      const fetchRota = async () => {
+        try {
+          const data = await getRota(id);
+          setTitulo(data.titulo);
+          setDescricao(data.descricao);
+          setDataRetorno(data.data_retorno);
+          setDataSaida(data.data_saida);
+          setSelectedOption(data.motorista);
+          setPlaca(data.placa);
+        } catch (error) {
+          console.log('Erro ao buscar rota:'+ error);
+        }
+      };
+
+      fetchRota();
+    }
+  }, [id]);
 
   return (
 
