@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../layouts/Header';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
- import { createRota, getRota } from './functions';
+ import { createRota, updateRota, getRota } from './functions';
  import { fetchPessoasOptions } from '../compras/functions';
+ import CarregarVendasPorRota from '../vendas/CarregarVendasPorRota';
 import AsyncSelect from 'react-select/async';
 
 
@@ -21,7 +22,12 @@ const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const status = 'aguardando';
-    const rota = await createRota(titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
+    let rota;
+    if(!id){
+      rota = await createRota(titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
+    } else {
+      rota = await updateRota(id, titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
+    }
     if(rota.status == 200){
       navigate(`/rotas?titulo=${rota.data.titulo}`); 
     } else {
@@ -42,8 +48,8 @@ const navigate = useNavigate();
           setDescricao(data.descricao);
           setDataRetorno(data.data_retorno);
           setDataSaida(data.data_saida);
-          setSelectedOption(data.motorista);
-          setPlaca(data.placa);
+          setSelectedOption({value: data.pessoa_id, label: data.pessoa.nome});
+          setPlaca(data.placa_veiculo);
         } catch (error) {
           console.log('Erro ao buscar rota:'+ error);
         }
@@ -90,6 +96,7 @@ const navigate = useNavigate();
                             cacheOptions
                             loadOptions={fetchPessoasOptions}
                             onChange={setSelectedOption}
+                            value={motorista}
                             placeholder="Motorista..."
                             defaultOptions
                             isClearable
@@ -129,6 +136,9 @@ const navigate = useNavigate();
           </CardFooter>
           </Form>
         </Card>
+        {id && (
+          <CarregarVendasPorRota propRota={id} />
+        )}
     </div>
   );
 };

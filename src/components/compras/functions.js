@@ -22,7 +22,6 @@ export const fetchCompras = async (numero_documento = null, fornecedor = null, p
   
     try {
       const response = await axiosInstance.get(`/listPessoas?search=${inputValue}`);
-        console.log(response);
       return response.data.map((pessoa) => ({
         value: pessoa.id,
         label: pessoa.nome

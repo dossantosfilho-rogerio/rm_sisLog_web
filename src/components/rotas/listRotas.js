@@ -25,6 +25,7 @@ const ListRotas = () => {
     try {
       const dados = await fetchRotas(titulo, '', data_saida);
       setRotas(dados.data); // Atualiza o estado com as Rotas
+      console.log(dados.data);
     } catch (error) {
       console.error("Erro ao carregar rotas:", error);
     }
@@ -92,9 +93,9 @@ const ListRotas = () => {
                   <CardFooter>
                     <Row>
                       <Col>
-                      Data de Saída: {new Date(element.data_saida).toLocaleDateString('pt-BR')}
+                      Data de Saída: {new Date(element.data_saida+ 'T00:00:00').toLocaleDateString('pt-BR')}
                       {element.data_retorno && (
-                      <p>Data de Retorno: {new Date(element.data_retorno).toLocaleDateString('pt-BR')}</p>
+                      <p>Data de Retorno: {new Date(element.data_retorno+ 'T00:00:00').toLocaleDateString('pt-BR')}</p>
                       )
                       }
                       </Col>

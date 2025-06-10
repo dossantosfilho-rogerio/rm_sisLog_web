@@ -1,97 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from '../../layouts/Header';
 import './Venda.module.css';
-import { Button, Card, CardBody, CardFooter, CardHeader, Col, Container, Form, InputGroup, Row, Tab, Table } from 'react-bootstrap';
-import { fetchVendas, fetchPessoasOptions, fetchRotasOptions } from './functions';
-import AsyncSelect, { useAsync } from 'react-select/async';
+import { Card, CardBody, CardFooter, CardHeader, Col, Container, Navbar, Row, Table } from 'react-bootstrap';
+import { fetchVendas } from './functions';
+import { useNavigate } from 'react-router-dom'; // 1. Importe useNavigate
 
-const ListVendas = (propRota) => {
-const navigate = useNavigate();
+const CarregarVendasPorRota = (propRota) => {
 const [vendas, setVendas] = useState([]);
-const [numero_documento, setNumeroDocumento] = useState([]);
-const [cliente, setCliente] = useState(null);
-const [rota, setRota] = useState(null);
-const [searchParams] = useSearchParams();
-const numero_documentoParams = searchParams.get("numero_documento"); // Obtém o valor do parâmetro "numero_documento"
+const navigate = useNavigate(); // 2. Obtenha a função navigate dentro do componente
 
-const redirecionarAdicionarVenda = () => {
-    navigate("/venda");
-};
+useEffect(() => {
+  if(propRota){
+    carregarVendas();
+  }
+}, []
+
+);
+
 
 const carregarVendas = async () => {
     try {
-      const dados = await fetchVendas(numero_documentoParams, cliente, rota);
+      const dados = await fetchVendas(null, null, propRota);
       setVendas(dados.data);
     } catch (error) {
       console.error("Erro ao carregar Vendas:", error);
     }
   };
 
-  useEffect((propRota) => {
-    setRota(propRota);
-  }, [propRota]
-
-  )
-
-  useEffect(() => {
-      if (numero_documentoParams) {
-        setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
-        carregarVendas();
-      }
-    }, [numero_documentoParams]);
-  
 
   return (
     <div>
-  <Header />
+<Navbar expand="sm" className="bg-body-tertiary">
+    <Container>
+      <Navbar.Brand href="#">Pedidos de Vendas</Navbar.Brand>
 
-  <Form action="#" onSubmit={carregarVendas}>
-      <Row style={{ margin: '10px' }}>
-        <Col>
-            
-        <AsyncSelect
-                cacheOptions
-                loadOptions={fetchPessoasOptions}
-                onChange={setCliente}
-                placeholder="Cliente..."
-                defaultOptions
-                isClearable
-            />
-             
-        </Col>
-        <Col>
-            
-        <AsyncSelect
-                cacheOptions
-                loadOptions={fetchRotasOptions}
-                onChange={setRota}
-                placeholder="Rota..."
-                defaultOptions
-                isClearable
-            />
-             
-        </Col>
-        <Col>
-          <InputGroup>
-          <Form.Control
-            name="numero_documento"
-            placeholder="Nº do Documento"
-            aria-label="Nº do Documento"
-            aria-describedby="basic-addon2"
-            value={numero_documento}
-            onChange={(e) => setNumeroDocumento(e.target.value)}
-          /> 
-          <Button onClick={carregarVendas} type="submit" variant="outline-primary" id="button-addon2">
-            Pesquisar
-          </Button>
-          <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
-        </InputGroup>
-        </Col>
-      </Row>
-    </Form>
-
-
+    </Container>
+  </Navbar>
   {vendas.reduce((rows, element, index) => {
     // A cada 2 vendas, adicionamos um novo Row
     if (index % 2 === 0) rows.push([]);
@@ -165,4 +109,4 @@ const carregarVendas = async () => {
   );
 };
 
-export default ListVendas;
+export default CarregarVendasPorRota;

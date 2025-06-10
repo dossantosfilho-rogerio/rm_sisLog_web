@@ -1,6 +1,6 @@
 
   .card {
-    height: 200px; /* Altura fixa para o card */
+    min-height: 200px; /* Altura fixa para o card */
     background-color: #f8f9fa; /* Exemplo de cor de fundo */
     border: 1px solid #ccc; /* Exemplo de borda */
     border-radius: 8px; /* Bordas arredondadas */
@@ -10,7 +10,6 @@
   }
   
   .cardbody {
-    height: 120px; /* Altura fixa para o conteúdo do card */
     overflow: hidden; /* Impede que o conteúdo exceda o limite */
     text-overflow: ellipsis; /* Exibe "..." quando o texto é muito longo */
   }

@@ -50,13 +50,23 @@ export const fetchRotas = async (titulo = null, placa = null, data = null, page 
 
   export const createRota = async (titulo, descricao, pessoa_id, placa_veiculo, data_retorno, data_saida, status) => {    
     try {
-      console.log(pessoa_id);
       const response = await axiosInstance.post('/createRota', {titulo, descricao, pessoa_id, placa_veiculo, data_retorno, data_saida, status});
     //console.log(response);
       return response;
       
     } catch (error) {
-      console.error("Erro ao incluir o produto:", error);
+      console.error("Erro ao incluir a rota:", error);
+      return [];
+    }
+  };
+
+  export const updateRota = async (id, titulo, descricao, pessoa_id, placa_veiculo, data_retorno, data_saida, status) => {    
+    try {
+      const response = await axiosInstance.post('/updateRota', {id, titulo, descricao, pessoa_id, placa_veiculo, data_retorno, data_saida, status});
+      return response;
+      
+    } catch (error) {
+      console.error("Erro ao atualizar a rota:", error);
       return [];
     }
   };
