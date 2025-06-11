@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     textAlign: 'center',
-    fontSize: 8,
+    fontSize: 7,
     color: '#555',
   },
   
@@ -94,10 +94,18 @@ const styles = StyleSheet.create({
 
 });
 
+const VENDAS_POR_PAGINA = 14;
+
+
 // --- COMPONENTE RotaPDF ---
-const RotaPDF = ({ data }) => (
-  <Document>
-    <Page size={{width: PAGE_WIDTH_PT, height: PAGE_HEIGHT_PT}} style={styles.page}>
+const RotaPDF = ({ data }) => {
+  const paginas = [];
+  if (data.vendas && data.vendas.length > 0) {
+    
+for (let i = 0; i < data.vendas.length; i += VENDAS_POR_PAGINA) {
+  const vendasPagina = data.vendas.slice(i, i + VENDAS_POR_PAGINA);
+  paginas.push(
+  <Page key={i} size={{width: PAGE_WIDTH_PT, height: PAGE_HEIGHT_PT}} style={styles.page}>
       {/* Cabeçalho do Formulário */}
       <View style={styles.header}>
         <Text>Relatório de Rota - Nº {data.rota.id}</Text>
@@ -140,9 +148,9 @@ const RotaPDF = ({ data }) => (
         </View>
       </View>
 
-      {/* Seção de Vendas (Exemplo - você pode precisar de um layout mais complexo aqui) */}
+      {/* Seção de Vendas */}
       <View style={styles.section}>
-        <Text style={styles.label}>Vendas Associadas:</Text>
+        <Text style={styles.label}>Vendas:</Text>
         {data.vendas && data.vendas.length > 0 ? (
           <View style={styles.table}>
             <View style={styles.tableRow}>
@@ -151,12 +159,17 @@ const RotaPDF = ({ data }) => (
               <View style={styles.tableCol}><Text style={styles.tableCell}>Cliente</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>Valor Total</Text></View>
             </View>
-          {data.vendas.map((venda) => (
+          {vendasPagina.map((venda) => (
             <View style={styles.tableRow}>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{venda.numero_documento}</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{new Date(venda.data_venda+ 'T00:00:00').toLocaleDateString('pt-br')}</Text></View>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>{venda.cliente.nome}</Text></View>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>{venda.total}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell} >{venda.cliente.nome.length > 30 ? venda.cliente.nome.slice(0, 30) + '...' : venda.cliente.nome }</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{
+                                                                        new Intl.NumberFormat('pt-BR', {
+                                                                            style: 'currency',
+                                                                            currency: 'BRL',
+                                                                          }).format(venda.total)
+                                                                        }</Text></View>
             </View>
           ))}
           </View>
@@ -167,10 +180,12 @@ const RotaPDF = ({ data }) => (
 
       {/* Rodapé */}
       <View style={styles.footer}>
-        <Text>Documento gerado automaticamente em {new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}</Text>
+        <Text>Página {(i/VENDAS_POR_PAGINA)+1}</Text>
       </View>
     </Page>
-  </Document>
-);
-
+  );
+  }
+}
+  return <Document>{paginas}</Document>;
+};
 export default RotaPDF;

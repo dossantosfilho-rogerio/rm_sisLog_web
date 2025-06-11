@@ -5,6 +5,8 @@ import './Venda.module.css';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Container, Form, InputGroup, Row, Tab, Table } from 'react-bootstrap';
 import { fetchVendas, fetchPessoasOptions, fetchRotasOptions } from './functions';
 import AsyncSelect, { useAsync } from 'react-select/async';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import VendaPDF from './VendaPDF';
 
 const ListVendas = (propRota) => {
 const navigate = useNavigate();
@@ -22,7 +24,7 @@ const redirecionarAdicionarVenda = () => {
 const carregarVendas = async () => {
     try {
       const dados = await fetchVendas(numero_documentoParams, cliente, rota);
-      setVendas(dados.data);
+      setVendas(dados);
     } catch (error) {
       console.error("Erro ao carregar Vendas:", error);
     }
@@ -101,9 +103,26 @@ const carregarVendas = async () => {
     <Row style={{ marginTop: '15px' }} key={rowIndex}>
       {row.map((element) => (
         <Col key={element.id} sm={6}> {/* O sm={6} divide a largura em 2 partes */}
-          <a className="card-hover" href={`/venda/${element.id}`}>
-            <Card>
-              <CardHeader>Venda #{element.id}#</CardHeader>
+          
+            <Card className='card-hover'>
+              <CardHeader>
+              <h6>Venda #{element.numero_documento}#</h6>
+              {element && (
+              <PDFDownloadLink
+                document={<VendaPDF data={element} />}
+                fileName={`venda-${element.id}.pdf`}
+              >
+                {({ loading }) => (
+                  <button
+                    className="btn btn-primary btn-sm ms-auto"
+                    disabled={loading}
+                  >
+                    {loading ? 'Gerando PDF...' : 'Imprimir Venda'}
+                  </button>
+                )}
+              </PDFDownloadLink>
+            )}
+              </CardHeader>
               <CardBody>
                 <p>Cliente: {element.cliente.nome}</p>
                 {element.Rota && (
@@ -156,7 +175,7 @@ const carregarVendas = async () => {
                 </Row>
               </CardFooter>
             </Card>
-          </a>
+        
         </Col>
       ))}
     </Row>

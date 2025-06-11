@@ -52,7 +52,7 @@ const navigate = useNavigate();
         try {
           const data = await getRota(id);
           const vendasData = await fetchVendas(null, null, data.id);
-          setVendas(vendasData.data); // Assumindo que 'dados.data' contém a array de vendas
+          setVendas(vendasData); // Assumindo que 'dados.data' contém a array de vendas
           setRota(data);
           setTitulo(data.titulo);
           setDescricao(data.descricao);
@@ -91,7 +91,7 @@ const dataParaPDF = {
                     className="btn btn-primary btn-sm ms-auto"
                     disabled={loading}
                   >
-                    {loading ? 'Gerando PDF...' : 'Download Rota PDF'}
+                    {loading ? 'Gerando PDF...' : 'Imprimir Rota'}
                   </button>
                 )}
               </PDFDownloadLink>

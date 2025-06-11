@@ -21,7 +21,7 @@ useEffect(() => {
 const carregarVendas = async () => {
     try {
       const dados = await fetchVendas(null, null, propRota);
-      setVendas(dados.data);
+      setVendas(dados);
     } catch (error) {
       console.error("Erro ao carregar Vendas:", error);
     }
