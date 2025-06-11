@@ -6,12 +6,17 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from '
  import { fetchPessoasOptions } from '../compras/functions';
  import CarregarVendasPorRota from '../vendas/CarregarVendasPorRota';
 import AsyncSelect from 'react-select/async';
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer'; // Importe conforme necessário
+import RotaPDF from './RotaPDF';
+import { fetchVendas } from '../vendas/functions';
 
 
 const Rota = () => {
 const navigate = useNavigate();
 
   const { id } = useParams();
+  const [rota, setRota] = useState(null);
+  const [vendas, setVendas] = useState([]);
   const [titulo, setTitulo] = useState([]);
   const [descricao, setDescricao] = useState([]);
   const [data_retorno, setDataRetorno] = useState('');
@@ -19,20 +24,22 @@ const navigate = useNavigate();
   const [motorista, setSelectedOption] = useState(null);
   const [placa, setPlaca] = useState([]);
 
+  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const status = 'aguardando';
-    let rota;
+    let rotaAux;
     if(!id){
-      rota = await createRota(titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
+      rotaAux = await createRota(titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
     } else {
-      rota = await updateRota(id, titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
+      rotaAux = await updateRota(id, titulo, descricao, motorista.value, placa, data_retorno, data_saida, status);
     }
-    if(rota.status == 200){
-      navigate(`/rotas?titulo=${rota.data.titulo}`); 
+    if(rotaAux.status == 200){
+      navigate(`/rotas?titulo=${rotaAux.data.titulo}`); 
     } else {
       alert('houve um erro');
-      console.log(rota);
+      console.log(rotaAux);
     }
     
     //setMensagem('Compra adicionada!');
@@ -44,6 +51,9 @@ const navigate = useNavigate();
       const fetchRota = async () => {
         try {
           const data = await getRota(id);
+          const vendasData = await fetchVendas(null, null, data.id);
+          setVendas(vendasData.data); // Assumindo que 'dados.data' contém a array de vendas
+          setRota(data);
           setTitulo(data.titulo);
           setDescricao(data.descricao);
           setDataRetorno(data.data_retorno);
@@ -58,13 +68,35 @@ const navigate = useNavigate();
       fetchRota();
     }
   }, [id]);
-
+const dataParaPDF = {
+    rota: rota,
+    vendas: vendas, // Adiciona as vendas carregadas ao objeto da rota
+  };
   return (
 
     <div>
         <Header />
         <Card style={{ margin: 'auto'}}>
-          <CardHeader>{id ? 'Atualizar Rota' : 'Adicionar Rota'}</CardHeader>
+           <CardHeader>
+            {/* Título (à esquerda por padrão) */}
+            <h5>{id ? 'Atualizar Rota' : 'Adicionar Rota'}</h5>
+
+            {id && rota && (
+              <PDFDownloadLink
+                document={<RotaPDF data={dataParaPDF} />}
+                fileName={`rota-${id}.pdf`}
+              >
+                {({ loading }) => (
+                  <button
+                    className="btn btn-primary btn-sm ms-auto"
+                    disabled={loading}
+                  >
+                    {loading ? 'Gerando PDF...' : 'Download Rota PDF'}
+                  </button>
+                )}
+              </PDFDownloadLink>
+            )}
+          </CardHeader>
           <Form action="#" onSubmit={handleSubmit}>
 
           

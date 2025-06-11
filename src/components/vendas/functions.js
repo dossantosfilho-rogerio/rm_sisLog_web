@@ -11,7 +11,6 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
           limit: limit
         }
       });
-  
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.message : error.message);

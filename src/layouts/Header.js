@@ -11,10 +11,8 @@ const Header = () => {
   return (
     <Navbar expand="sm" className="bg-body-tertiary">
     <Container>
-      {/* Left Brand */}
       <Navbar.Brand href="/home">RM Tripas</Navbar.Brand>
 
-      {/* Push Icon to End */}
       <NavDropdown title={<i className="bi bi-gear fs-4"></i>} className="ms-auto" id="basic-nav-dropdown">
             <NavDropdown.Item href="/usuario/criar">
               Criar Usuário
