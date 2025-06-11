@@ -15,7 +15,8 @@ const [numero_documento, setNumeroDocumento] = useState([]);
 const [cliente, setCliente] = useState(null);
 const [rota, setRota] = useState(null);
 const [searchParams] = useSearchParams();
-const numero_documentoParams = searchParams.get("numero_documento"); // Obtém o valor do parâmetro "numero_documento"
+const numero_documentoParams = searchParams.get("numero_documento")?searchParams.get("numero_documento"):null; // Obtém o valor do parâmetro "numero_documento"
+
 
 const redirecionarAdicionarVenda = () => {
     navigate("/venda");
@@ -35,11 +36,17 @@ const carregarVendas = async () => {
   }, [propRota]
 
   )
+  useEffect(()=>{
+    carregarVendas();
+
+  }, []);
 
   useEffect(() => {
+      console.log(numero_documentoParams);
       if (numero_documentoParams) {
         setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
         carregarVendas();
+
       }
     }, [numero_documentoParams]);
   
@@ -143,7 +150,7 @@ const carregarVendas = async () => {
                     <tbody>
                     {
                       element.itens_venda.map((e) => (  
-                        <tr>
+                        <tr key={e.id}>
                             <td>
                                 {e.produto.nome}
                             </td>
