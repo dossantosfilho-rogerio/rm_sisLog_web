@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "Rodando o build do sistema"
+npm run build
 
 echo "Removendo arquivos antigos do servidor..."
 ssh root@145.223.29.87 "rm -rf /var/www/rm_web/*"

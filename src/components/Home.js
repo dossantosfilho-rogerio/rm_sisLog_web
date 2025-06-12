@@ -25,6 +25,8 @@ const Home = () => {
           </Card>
           </a>
         </Col>
+        </Row>
+        <Row style={{marginTop:'15px'}}>
         <Col>
         <a className='card-hover' href="/compras">
           <Card className='card-hover'>
