@@ -35,6 +35,7 @@ function App() {
           <Route path="/contasareceber" element={<ListContasAReceber />} />
           <Route path="/vendas" element={<ListVendas />} />
           <Route path="/venda" element={<Venda />} />
+          <Route path="/venda/:id" element={<Venda />} />
           <Route path="/categorias" element={<ListCategorias />} />
           <Route path="/categoria" element={<Categoria />} />
           <Route path="/rotas" element={<ListRotas />} />

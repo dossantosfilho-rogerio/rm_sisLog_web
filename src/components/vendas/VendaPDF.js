@@ -129,7 +129,7 @@ const VendaPDF = ({ data }) => (
               <View style={styles.tableCol}><Text style={styles.tableCell}>Valor Total</Text></View>
             </View>
           {data.itens_venda.map((item) => (
-            <View style={styles.tableRow}>
+            <View key={item.id} style={styles.tableRow}>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.produto.nome}</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.quantidade}</Text></View>
               <View style={styles.tableCol}><Text style={styles.tableCell}>{item.preco_unitario}</Text></View>

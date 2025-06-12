@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams  } from "react-router-dom";
 import Header from '../../layouts/Header';
 import { Col, Button, Form, InputGroup, Row, Table, Card, CardHeader, CardBody } from 'react-bootstrap';
-import { fetchContasAReceberAbertos, baixarContaAReceberBanco } from './functions';
+import { fetchContasAReceber } from './functions';
+import ModalBaixarContaAReceber from './modalBaixarContaAReceber';
 const ListContasAReceber = () => {
   const navigate = useNavigate();
   const [ContasAReceber, setContasAReceber] = useState([]);
@@ -21,19 +22,10 @@ const ListContasAReceber = () => {
 
   const carregarContasAReceber = async () => {
     try {
-      const dados = await fetchContasAReceberAbertos();
+      const dados = await fetchContasAReceber();
       setContasAReceber(dados); // Atualiza o estado com os ContasAReceber
     } catch (error) {
       console.error("Erro ao carregar ContasAReceber:", error);
-    }
-  };
-
-  const baixarContaAReceber = async (id) => {
-    try {
-      const dados = await baixarContaAReceberBanco(id);
-      carregarContasAReceber(); // Atualiza o estado com os ContasAReceber
-    } catch (error) {
-      console.error("Erro ao baixar ContaAReceber:", error);
     }
   };
 
@@ -56,7 +48,7 @@ const ListContasAReceber = () => {
       </Form>
     <Card>
       <CardHeader>
-        <h3>Contas a Receber Abertas</h3>
+        <h3>Contas a Receber</h3>
       </CardHeader>
     <CardBody>
     <Table striped bordered hover>
@@ -87,9 +79,7 @@ const ListContasAReceber = () => {
               <tr key={conta.id}>
                 <td>
                   {conta.status != 'pago' && (
-                    <Button onClick={() => baixarContaAReceber(conta.id)} variant="outline-success" id="button-baixar">
-                      Baixar Conta
-                    </Button>
+                    <ModalBaixarContaAReceber onClose={carregarContasAReceber} conta_param={conta} />
                   )}
                 </td>
                 <td>

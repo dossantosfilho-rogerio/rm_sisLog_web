@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../layouts/Header';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Nav, Row, Tab, Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
-import { fetchPessoasOptions, fetchProdutosOptions, createVenda, fetchRotasOptions, fetchVendas, existVenda } from './functions';
-import { useNavigate } from 'react-router-dom';
+import { fetchPessoasOptions, createVenda, fetchRotasOptions, getVenda, existVenda, updateVenda, deleteItemVenda, deleteContaAReceber, createContaAReceber, createItemVenda } from './functions';
+import { useNavigate, useParams } from 'react-router-dom';
 import ModalProduto from  '../produtos/modalProduto';
 import ModalContaAReceber from  '../contasareceber/modalContaAReceber';
+import { getDataFormatadaISO } from '../../services/utils';
 
 const Venda = () => {
-  const [selectedOptionCliente, setSelectedOption] = useState(null);
-  const [vendedor, setVendedor] = useState(null);
-  const [data_venda, setDataVenda] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedOptionCliente, setSelectedOption] = useState([]);
+  const [vendedor, setVendedor] = useState([]);
+  const [data_venda, setDataVenda] = useState(getDataFormatadaISO(new Date()));
   const [produtos, setProdutos] = useState([]);
   const [contasAReceber, setContasAReceber] = useState([]);
-  const [numero_documento, setNumeroDocumento] = useState(null);
-  const [rota, setRota] = useState(null);
+  const [numero_documento, setNumeroDocumento] = useState([]);
+  const [rota, setRota] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalConta, setTotalConta] = useState(0);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -25,7 +27,7 @@ const Venda = () => {
     if(totalConta != total){
       resposta = window.confirm("Total das contas a receber não confere com total dos produtos. Prosseguir assim mesmo?");
     }
-    if(resposta){
+    if(resposta && !id){
       const venda = await createVenda(selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber);
       //setMensagem('Venda adicionada!');
       if(venda.status == 200){
@@ -34,14 +36,25 @@ const Venda = () => {
         alert('houve um erro');
         console.log(venda);
       }  
+    } else if(id){
+      const venda = await updateVenda(id, selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber);
+
     }
   }
-  const removerProdutoList = (produto_aux) => {
+  const removerProdutoList = async (produto_aux) => {
+    if(id){
+      //remove Item_venda do banco
+      await deleteItemVenda(produto_aux.id);
+    }
     setProdutos(produtos.filter(produto => produto !== produto_aux));
     setTotal(Number(total) - (Number(produto_aux.quantidade) * Number(produto_aux.preco_unitario)));
   };
 
-  const removerContaList = (conta_aux) => {
+  const removerContaList = async (conta_aux) => {
+    if(id){
+      //remove conta do banco
+      await deleteContaAReceber(conta_aux.id);
+    }
     setContasAReceber(contasAReceber.filter(conta => conta !== conta_aux));
     setTotalConta(Number(totalConta) - (Number(conta_aux.valor)));
   };
@@ -53,14 +66,24 @@ const Venda = () => {
       ));
   };
 
-  const adicionarProdutoList = (novoProduto) => {
+  const adicionarProdutoList = async (novoProduto) => {
+    if(id){
+      novoProduto.id = await createItemVenda(novoProduto, id);
+    }
     setTotal(Number(total) + (Number(novoProduto.quantidade) * Number(novoProduto.preco_unitario)));
-    novoProduto.id = Date.now();
+    if(!id){
+      novoProduto.id = Date.now();
+    }
+    
     novoProduto.nome = `Produto ${produtos.length + 1}`;
     setProdutos([...produtos, novoProduto]);
 };
 
-const adicionarContaList = (novaConta) => {
+const adicionarContaList = async (novaConta) => {
+  if(id){
+    //Adiciona a Conta a Receber direto no banco
+    const retorno = await createContaAReceber(novaConta, id);
+  }
   setTotalConta(Number(totalConta) + (Number(novaConta.valor)));
   novaConta.id = Date.now();
   novaConta.nome = `Conta a Receber ${produtos.length + 1}`;
@@ -68,7 +91,11 @@ const adicionarContaList = (novaConta) => {
 };
 
   const checkNumeroDocumento = async () => {
-    const retorno = await existVenda(null, numero_documento);
+    let retorno;
+    if(numero_documento) {
+      retorno = await existVenda(null, numero_documento);
+    }
+      
     if(retorno){
       alert('Nota '+ numero_documento + ' já cadastrada.');
     }
@@ -76,7 +103,44 @@ const adicionarContaList = (novaConta) => {
 
 
 
+  useEffect(() => {
+      if (id) {
+        const setProdutosAux = (itens_venda) => {
+          const prod = itens_venda.map((itens) =>({
+            id: itens.id, produto_id: itens.produto.id, produto_nome:itens.produto.nome, quantidade: itens.quantidade, preco_unitario: itens.preco_unitario, complete: false, incluido: true
+          }));
+              setProdutos(prod);
+          }
 
+        const setContasAReceberAux = (contas) => {
+          const cont = contas.map((conta) =>({
+              valor: conta.valor, data_vencimento:conta.data_vencimento, id:conta.id, incluido: true
+          }));
+
+          
+            const total = cont.reduce((acc, curr) => acc + Number(curr.valor), 0);
+            setTotalConta(total);
+            setContasAReceber(cont);
+        }
+        const fetchVenda = async () => {
+          try {
+            const data = await getVenda(id);
+            setVendedor({value: data.vendedor_id, label: data.vendedor.nome});
+            setSelectedOption({value: data.cliente.id, label: data.cliente.nome});
+            setDataVenda(data.data_venda);
+            setProdutosAux(data.itens_venda);
+            setContasAReceberAux(data.conta_a_receber);
+            setRota({value: data.rota_id, label: data.rota.titulo});
+            setTotal(data.total);
+            setNumeroDocumento(data.numero_documento);
+          } catch (error) {
+            console.log('Erro ao buscar venda:'+ error);
+          }
+        };
+  
+        fetchVenda();
+      }
+    }, [id]);
 
 
 
@@ -99,6 +163,7 @@ const adicionarContaList = (novaConta) => {
                             cacheOptions
                             loadOptions={fetchPessoasOptions}
                             onChange={setSelectedOption}
+                            value={selectedOptionCliente}
                             placeholder="Cliente..."
                             defaultOptions
                             isClearable
@@ -113,6 +178,7 @@ const adicionarContaList = (novaConta) => {
                             cacheOptions
                             loadOptions={fetchPessoasOptions}
                             onChange={setVendedor}
+                            value={vendedor}
                             placeholder="Vendedor..."
                             defaultOptions
                             isClearable
@@ -136,6 +202,7 @@ const adicionarContaList = (novaConta) => {
                             cacheOptions
                             loadOptions={fetchRotasOptions}
                             onChange={setRota}
+                            value={rota}
                             placeholder="Rota..."
                             defaultOptions
                             isClearable
@@ -195,7 +262,7 @@ const adicionarContaList = (novaConta) => {
                                     {Number(conta.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                   </td>
                                   <td>
-                                    {new Date(conta.data_vencimento).toLocaleDateString('pt-BR')}
+                                    {new Date(conta.data_vencimento+'T00:00').toLocaleDateString('pt-BR')}
                                   </td>
                                   <td>
                                   <Button onClick={() => removerContaList(conta)}

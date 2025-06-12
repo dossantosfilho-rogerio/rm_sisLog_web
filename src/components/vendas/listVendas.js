@@ -42,7 +42,6 @@ const carregarVendas = async () => {
   }, []);
 
   useEffect(() => {
-      console.log(numero_documentoParams);
       if (numero_documentoParams) {
         setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
         carregarVendas();
@@ -113,7 +112,7 @@ const carregarVendas = async () => {
           
             <Card className='card-hover'>
               <CardHeader>
-              <h6>Venda #{element.numero_documento}#</h6>
+              <a href={`/venda/${element.id}`}><h6>Venda #{element.numero_documento}#</h6></a>
               {element && (
               <PDFDownloadLink
                 document={<VendaPDF data={element} />}

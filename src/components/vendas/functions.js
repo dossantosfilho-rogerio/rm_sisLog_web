@@ -11,7 +11,6 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
           limit: limit
         }
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.message : error.message);
@@ -34,6 +33,78 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
       throw new Error(error.response ? error.response.data.message : error.message);
     }
   };
+
+  export const createItemVenda = async (produto, idPedidoVenda) => {
+    try {
+      const response = await axiosInstance.post('/createItemVenda', {
+        params: {
+            idPedidoVenda: idPedidoVenda,
+            produto: produto
+        }
+      });
+      return response.data.id;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+
+  export const createContaAReceber = async (contaareceber, idPedidoVenda) => {
+    try {
+      const response = await axiosInstance.post('/createContaAReceber', {
+        params: {
+            idPedidoVenda: idPedidoVenda,
+            conta: contaareceber
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+  export const deleteContaAReceber = async (id) => {
+    //retorna vendas cujo parâmetros são exatos ao da busca.
+    try {
+      const response = await axiosInstance.post('/deleteContaAReceber', {
+        params: {
+            id: id
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+  export const deleteItemVenda = async (id) => {
+    //retorna vendas cujo parâmetros são exatos ao da busca.
+    try {
+      const response = await axiosInstance.post('/deleteItemVenda', {
+        params: {
+            id: id
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
+    export const getVenda = async (id) => {
+    //retorna vendas cujo parâmetros são exatos ao da busca.
+    try {
+      const response = await axiosInstance.get('/getVenda', {
+        params: {
+            id: id
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
 
   export const fetchPessoasOptions = async (inputValue) => {
     if (!inputValue) return [];
@@ -82,6 +153,23 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
     }
   };
 
+
+export const updateVenda = async (id, cliente, vendedor, rota, numero_documento, data_venda) => {
+    try {
+      let cliente_id = cliente.value;
+      let vendedor_id = vendedor.value;
+      let rota_id = null;
+      if(rota != null){
+        rota_id = rota.value;
+      }
+      const response = await axiosInstance.post(`/updateVenda`, { id, cliente_id, vendedor_id, rota_id, numero_documento, data_venda });
+      return response;
+      
+    } catch (error) {
+      console.error("Erro ao atualizar a Venda:", error);
+      return [];
+    }
+  };
 
   export const createVenda = async (cliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber) => {
     if (produtos.length <= 0) throw new Error("Necessário ao menos um produto.");
