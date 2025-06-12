@@ -14,8 +14,8 @@ const [vendas, setVendas] = useState([]);
 const [numero_documento, setNumeroDocumento] = useState([]);
 const [cliente, setCliente] = useState(null);
 const [rota, setRota] = useState(null);
-const [searchParams] = useSearchParams();
-const numero_documentoParams = searchParams.get("numero_documento")?searchParams.get("numero_documento"):null; // Obtém o valor do parâmetro "numero_documento"
+const [searchParams, setSearchParams] = useSearchParams();
+// const numero_documentoParams = searchParams.get("numero_documento")?searchParams.get("numero_documento"):null; // Obtém o valor do parâmetro "numero_documento"
 
 
 const redirecionarAdicionarVenda = () => {
@@ -24,11 +24,19 @@ const redirecionarAdicionarVenda = () => {
 
 const carregarVendas = async () => {
     try {
-      const dados = await fetchVendas(numero_documentoParams, cliente, rota);
+      const dados = await fetchVendas(numero_documento, cliente, rota);
+      console.log(dados);
       setVendas(dados);
     } catch (error) {
       console.error("Erro ao carregar Vendas:", error);
     }
+  };
+
+  const deleteFilter = () => {
+    // setCliente(null);
+    // setRota(null);
+    setNumeroDocumento('');
+    // setSearchParams({numero_documento:null});
   };
 
   useEffect((propRota) => {
@@ -41,13 +49,15 @@ const carregarVendas = async () => {
 
   }, []);
 
+  useEffect(()=>{
+    carregarVendas();
+  }, [numero_documento]);
+
   useEffect(() => {
-      if (numero_documentoParams) {
-        setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
-        carregarVendas();
+        setNumeroDocumento(searchParams.get("numero_documento")); // Atualiza o input com o valor da URL
 
       }
-    }, [numero_documentoParams]);
+  , [searchParams]);
   
 
   return (
@@ -81,7 +91,7 @@ const carregarVendas = async () => {
              
         </Col>
         <Col>
-          <InputGroup>
+          
           <Form.Control
             name="numero_documento"
             placeholder="Nº do Documento"
@@ -89,14 +99,23 @@ const carregarVendas = async () => {
             aria-describedby="basic-addon2"
             value={numero_documento}
             onChange={(e) => setNumeroDocumento(e.target.value)}
-          /> 
-          <Button onClick={carregarVendas} type="submit" variant="outline-primary" id="button-addon2">
-            Pesquisar
-          </Button>
-          <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
-        </InputGroup>
-        </Col>
+          />         
+          </Col>
       </Row>
+
+      <Row>
+        <Col>
+        <InputGroup>
+            <Button onClick={deleteFilter} variant='danger'>Apagar Filtro</Button>
+            <Button onClick={carregarVendas}  variant="outline-primary" id="button-addon2">
+             Pesquisar
+            </Button>
+            <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
+            </InputGroup>
+            </Col>
+      </Row>
+        
+
     </Form>
 
 
