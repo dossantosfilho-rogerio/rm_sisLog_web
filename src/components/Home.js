@@ -58,7 +58,7 @@ const Home = () => {
         <Col>
           <a className='card-hover' href="/pessoas">
           <Card className='card-hover'>
-            <CardHeader>Pessoas (Clientes e Fornecedores)</CardHeader>
+            <CardHeader>Pessoas (Clientes, Fornecedores e Motoristas)</CardHeader>
           </Card>
           </a>
         </Col>

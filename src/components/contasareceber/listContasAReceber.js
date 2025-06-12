@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams  } from "react-router-dom";
 import Header from '../../layouts/Header';
 import { Col, Button, Form, InputGroup, Row, Table, Card, CardHeader, CardBody } from 'react-bootstrap';
-import { fetchContasAReceberAbertos } from './functions';
+import { fetchContasAReceberAbertos, baixarContaAReceberBanco } from './functions';
 const ListContasAReceber = () => {
   const navigate = useNavigate();
   const [ContasAReceber, setContasAReceber] = useState([]);
@@ -25,6 +25,15 @@ const ListContasAReceber = () => {
       setContasAReceber(dados); // Atualiza o estado com os ContasAReceber
     } catch (error) {
       console.error("Erro ao carregar ContasAReceber:", error);
+    }
+  };
+
+  const baixarContaAReceber = async (id) => {
+    try {
+      const dados = await baixarContaAReceberBanco(id);
+      carregarContasAReceber(); // Atualiza o estado com os ContasAReceber
+    } catch (error) {
+      console.error("Erro ao baixar ContaAReceber:", error);
     }
   };
 
@@ -54,6 +63,9 @@ const ListContasAReceber = () => {
         <thead>
         <tr>
           <td>
+            Ação
+          </td>
+          <td>
             Data Vencimento
           </td>
           <td>
@@ -73,6 +85,13 @@ const ListContasAReceber = () => {
         <tbody>
           {ContasAReceber.map((conta) => (
               <tr key={conta.id}>
+                <td>
+                  {conta.status != 'pago' && (
+                    <Button onClick={() => baixarContaAReceber(conta.id)} variant="outline-success" id="button-baixar">
+                      Baixar Conta
+                    </Button>
+                  )}
+                </td>
                 <td>
                   {new Date(conta.data_vencimento).toLocaleDateString('pt-BR')}
                 </td>

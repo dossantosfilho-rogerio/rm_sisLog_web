@@ -14,3 +14,16 @@ export const fetchContasAReceberAbertos = async (status = null, page = 1, limit 
     }
   };
 
+  export const baixarContaAReceberBanco = async (id) => {
+    try {
+      const response = await axiosInstance.post('/baixarContaAReceber', {
+        params: {
+          id: id
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.message : error.message);
+    }
+  };
+
