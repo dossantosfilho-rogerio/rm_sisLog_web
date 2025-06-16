@@ -25,7 +25,6 @@ const redirecionarAdicionarVenda = () => {
 const carregarVendas = async () => {
     try {
       const dados = await fetchVendas(numero_documento, cliente, rota);
-      console.log(dados);
       setVendas(dados);
     } catch (error) {
       console.error("Erro ao carregar Vendas:", error);
@@ -99,20 +98,23 @@ const carregarVendas = async () => {
             aria-describedby="basic-addon2"
             value={numero_documento}
             onChange={(e) => setNumeroDocumento(e.target.value)}
-          />         
+          />    
+           <InputGroup >
+            <Row style={{ margin: '10px' }}>
+                <Button onClick={deleteFilter} variant='danger'>Apagar Filtro</Button>
+                <Button onClick={carregarVendas}  variant="outline-primary" id="button-addon2">
+                  Pesquisar
+                </Button>
+                <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
+              </Row>
+          </InputGroup>     
           </Col>
       </Row>
 
       <Row>
         <Col>
-        <InputGroup>
-            <Button onClick={deleteFilter} variant='danger'>Apagar Filtro</Button>
-            <Button onClick={carregarVendas}  variant="outline-primary" id="button-addon2">
-             Pesquisar
-            </Button>
-            <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
-            </InputGroup>
-            </Col>
+         
+        </Col>
       </Row>
         
 
