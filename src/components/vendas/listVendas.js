@@ -89,9 +89,11 @@ const carregarVendas = async () => {
             />
              
         </Col>
-        <Col>
-          
-          <Form.Control
+
+      </Row>
+
+      <Row style={{ margin: '10px' }}>
+        <Col> <Form.Control
             name="numero_documento"
             placeholder="Nº do Documento"
             aria-label="Nº do Documento"
@@ -109,14 +111,21 @@ const carregarVendas = async () => {
               </Row>
           </InputGroup>     
           </Col>
-      </Row>
+            <Col className='d-flex justify-content-end'>
+            <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
+            </Col>
+        </Row>
+      
+         <Row style={{ margin: '10px' }}>
+            <Col>
+            <Button onClick={deleteFilter} variant='danger'>Apagar Filtro</Button>
+            <Button onClick={carregarVendas}  variant="outline-primary" id="button-addon2">
+             Pesquisar
+            </Button>
+            </Col>
 
-      <Row>
-        <Col>
-         
-        </Col>
-      </Row>
-        
+
+         </Row>
 
     </Form>
 
@@ -133,15 +142,19 @@ const carregarVendas = async () => {
           
             <Card className='card-hover'>
               <CardHeader>
-              <a href={`/venda/${element.id}`}><h6>Venda #{element.numero_documento}#</h6></a>
-              {element && (
+                <Row>
+                  <Col>
+                  <Button variant="primary" href={`/venda/${element.id}`}>Venda #{element.numero_documento}#</Button>
+                  </Col>
+                  <Col className='d-flex justify-content-end'>
+                  {element && (
               <PDFDownloadLink
                 document={<VendaPDF data={element} />}
                 fileName={`venda-${element.id}.pdf`}
               >
                 {({ loading }) => (
                   <button
-                    className="btn btn-primary btn-sm ms-auto"
+                    className="btn btn-outline-success btn-sm ms-auto"
                     disabled={loading}
                   >
                     {loading ? 'Gerando PDF...' : 'Imprimir Venda'}
@@ -149,6 +162,13 @@ const carregarVendas = async () => {
                 )}
               </PDFDownloadLink>
             )}
+                  </Col>
+                </Row>
+                
+                
+                
+              
+              
               </CardHeader>
               <CardBody>
                 <p>Cliente: {element.cliente.nome}</p>
