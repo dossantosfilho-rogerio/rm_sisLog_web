@@ -101,15 +101,7 @@ const carregarVendas = async () => {
             value={numero_documento}
             onChange={(e) => setNumeroDocumento(e.target.value)}
           />    
-           <InputGroup >
-            <Row style={{ margin: '10px' }}>
-                <Button onClick={deleteFilter} variant='danger'>Apagar Filtro</Button>
-                <Button onClick={carregarVendas}  variant="outline-primary" id="button-addon2">
-                  Pesquisar
-                </Button>
-                <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
-              </Row>
-          </InputGroup>     
+             
           </Col>
             <Col className='d-flex justify-content-end'>
             <Button onClick={redirecionarAdicionarVenda} variant="success">Adicionar</Button>
