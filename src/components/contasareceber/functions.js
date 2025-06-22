@@ -1,9 +1,10 @@
 import axiosInstance from "../../services/axios";
 
-export const fetchContasAReceber = async (status = null, page = 1, limit = 9) => {
+export const fetchContasAReceber = async (numero_documento = null, page = 1, limit = 9) => {
     try {
       const response = await axiosInstance.get('/listContasAReceber', {
         params: {
+          numero_documento: numero_documento,
           page: page,
           limit: limit
         }

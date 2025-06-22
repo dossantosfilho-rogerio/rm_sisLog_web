@@ -11,6 +11,7 @@ const ListContasAReceber = () => {
   const [searchParams] = useSearchParams();
   const nameParams = searchParams.get("nome"); // Obtém o valor do parâmetro "nome"
   const [name, setName] = useState(nameParams);
+  const [numero_documento, setNumeroDocumento] = useState([]);
   const redirecionarAdicionarCategorias = () => {
     navigate('/categoria');
   };
@@ -22,7 +23,7 @@ const ListContasAReceber = () => {
 
   const carregarContasAReceber = async () => {
     try {
-      const dados = await fetchContasAReceber();
+      const dados = await fetchContasAReceber(numero_documento);
       setContasAReceber(dados); // Atualiza o estado com os ContasAReceber
     } catch (error) {
       console.error("Erro ao carregar ContasAReceber:", error);
@@ -39,6 +40,16 @@ const ListContasAReceber = () => {
 
       <Form>
       <Row style={{ margin: '10px' }}>
+        <Col>
+          <Form.Control
+            name="numero_documento"
+            placeholder="Nº Nota"
+            aria-label="Nº do Documento"
+            aria-describedby="basic-addon2"
+            value={numero_documento}
+            onChange={(e) => setNumeroDocumento(e.target.value)}
+          />    
+        </Col>
         <Col>
           <Button onClick={carregarContasAReceber} variant="outline-success" id="button-addon2">
             Pesquisar
