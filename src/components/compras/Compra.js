@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../layouts/Header';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row, Table } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import ModalProduto from  '../produtos/modalProduto';
-import { fetchPessoasOptions, fetchProdutosOptions, createCompra, existCompra } from './functions';
-import { useNavigate } from 'react-router-dom';
+import { fetchPessoasOptions, fetchProdutosOptions, createCompra, existCompra, getCompra } from './functions';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Compra = () => {
+  const { id } = useParams();
   const [selectedOptionFornecedor, setSelectedOption] = useState(null);
   const [data_compra, setDataCompra] = useState([]);
   const [produtos, setProdutos] = useState([]);
-  const [numero_nota, setNumeroNota] = useState(null);
+  const [numero_nota, setNumeroNota] = useState([]);
     const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
@@ -59,7 +60,29 @@ const Compra = () => {
 };
 
 
+ useEffect(() => {
+    if (id) {
+      const fetchCompra = async () => {
+        try {
+          const data = await getCompra(id);
+          setSelectedOption({value: data.pessoa_id, label: data.pessoa.nome});
+          setDataCompra(data.data_compra);
+          data.itens_compra.map((itemCompra) => {
+            itemCompra.produto.quantidade = itemCompra.quantidade;
+            itemCompra.produto.preco_unitario = itemCompra.preco_unitario;
+            itemCompra.produto.produto_nome = itemCompra.produto.nome;
+            adicionarProdutoList(itemCompra.produto);
+          });
+          setNumeroNota(data.numero_nota);
+          setTotal(data.total);
+        } catch (error) {
+          console.log('Erro ao buscar Compra:'+ error);
+        }
+      };
 
+      fetchCompra();
+    }
+  }, [id]);
 
 
   return (
@@ -69,7 +92,7 @@ const Compra = () => {
         <Card style={{ margin: 'auto'}}>
         <Form action="#" onSubmit={handleSubmit}>
           <CardHeader>
-          Adicionar Compra
+          {id? ('Visualizar Compra'):('Adicionar Compra')}
           </CardHeader>
           <CardBody>
               
@@ -81,6 +104,7 @@ const Compra = () => {
                             cacheOptions
                             loadOptions={fetchPessoasOptions}
                             onChange={setSelectedOption}
+                            value={selectedOptionFornecedor}
                             placeholder="Fornecedor..."
                             defaultOptions
                             isClearable
@@ -112,7 +136,9 @@ const Compra = () => {
                       <CardHeader>
                         <Row>
                           <Col>
+                          {!id && (
                             <ModalProduto onProdutoAdicionado={adicionarProdutoList} />
+                          )} 
                           </Col>
                         </Row>
                       
@@ -133,9 +159,11 @@ const Compra = () => {
                             <td>
                               Total
                             </td>
+                            {!id && (
                             <td>
                               Remover
                             </td>
+                            )}
                           </tr>
                           </thead>
                           <tbody>
@@ -153,12 +181,14 @@ const Compra = () => {
                                   <td>
                                     {Number(Number(produto.quantidade) * Number(produto.preco_unitario)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                   </td>
+                                  {!id && (
                                   <td>
                                   <Button onClick={() => removerProdutoList(produto)}
                                 variant="danger" id="button-remover2">
                                             <i className='bi bi-dash-square'></i> Remover Produto
                                           </Button>
                                   </td>
+                                  )}
                                 </tr>
                             ))}
                             </tbody>
@@ -176,11 +206,13 @@ const Compra = () => {
                     </Card>
                 </Row>
           </CardBody>
+          {!id && (
           <CardFooter>
             <Button type="submit" variant="outline-primary" id="button-addon2">
               Salvar
             </Button>
           </CardFooter>
+          )}
           </Form>
         </Card>
     </div>

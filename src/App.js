@@ -48,6 +48,7 @@ function App() {
           <Route path="/pessoa" element={<Pessoa />} />
           <Route path="/compras" element={<ListCompras />} />
           <Route path="/compra" element={<Compra />} />
+          <Route path="/compra/:id" element={<Compra />} />
         </Route>
       </Routes>
     </Router>

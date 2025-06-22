@@ -79,4 +79,18 @@ export const fetchCompras = async (numero_documento = null, fornecedor = null, p
     }
   };
 
+  export const getCompra = async (id) => {
+    try {
+      const response = await axiosInstance.get('/getCompra', {
+        params: {
+          id: id,
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar Compra:", error);
+      return [];
+    }
+  };
+
   

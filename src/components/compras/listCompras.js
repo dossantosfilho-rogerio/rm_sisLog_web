@@ -26,6 +26,10 @@ const carregarCompras = async () => {
     }
   };
 
+    useEffect(() => {
+        carregarCompras();
+    }, []);
+
   useEffect(() => {
       if (numero_documentoParams) {
         setNumeroDocumento(numero_documentoParams); // Atualiza o input com o valor da URL
