@@ -43,6 +43,7 @@ function App() {
           <Route path="/rota/:id" element={<Rota />} />
           <Route path="/produtos" element={<ListProdutos />} />
           <Route path="/produto" element={<Produto />} />
+          <Route path="/produto/:id" element={<Produto />} />
           <Route path="/pessoas" element={<ListPessoas />} />
           <Route path="/pessoa" element={<Pessoa />} />
           <Route path="/compras" element={<ListCompras />} />

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../layouts/Header';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, Row } from 'react-bootstrap';
- import { createProduto } from './functions';
+import { createProduto, getProduto, updateProduto } from './functions';
 import AsyncSelect from 'react-select/async';
 import { fetchCategoriasOptions } from '../categorias/functions';
 
@@ -10,28 +10,51 @@ import { fetchCategoriasOptions } from '../categorias/functions';
 const Produto = () => {
 const navigate = useNavigate();
 
-
+  const { id } = useParams();
   const [nome, setNome] = useState([]);
   const [descricao, setDescricao] = useState([]);
   const [preco_venda, setPreco_venda] = useState([]);
   const [preco_custo, setPreco_custo] = useState([]);
   const [percentual_comissao, setPercentual_comissao] = useState([]);
   const [estoque, setEstoque] = useState(0);
-  const [categoria_id, setSelectedOption] = useState(null);
+  const [categoria, setSelectedOption] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const produto = await createProduto(nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria_id);
-    if(produto.status == 200){
-      navigate(`/produtos?nome=${produto.data.nome}`); 
+    let produto;
+    if(!id){
+      produto = await createProduto(nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria.value);
     } else {
-      alert('houve um erro');
-      console.log(produto);
+      produto = await updateProduto(id, nome, descricao, preco_venda, preco_custo, percentual_comissao, estoque, categoria.value);
     }
-    
-    //setMensagem('Compra adicionada!');
-    
+    if(produto.status === 200){
+        navigate(`/produtos?nome=${produto.data.nome}`); 
+      } else {
+        alert('houve um erro');
+        console.log(produto);
+      }
   }
+
+ useEffect(() => {
+    if (id) {
+      const fetchProduto = async () => {
+        try {
+          const data = await getProduto(id);
+          setNome(data.nome);
+          setDescricao(data.descricao);
+          setPreco_venda(data.preco_venda);
+          setPreco_custo(data.preco_custo);
+          setPercentual_comissao(data.percentual_comissao);
+          setEstoque(data.estoque);
+          setSelectedOption({value: data.categoria_id, label: data.categoria.nome});
+        } catch (error) {
+          console.log('Erro ao buscar produto:'+ error);
+        }
+      };
+
+      fetchProduto();
+    }
+  }, [id]);
 
   return (
 
@@ -99,6 +122,7 @@ const navigate = useNavigate();
                         cacheOptions
                         loadOptions={fetchCategoriasOptions}
                         onChange={setSelectedOption}
+                        value={categoria}
                         placeholder="Categoria..."
                         defaultOptions
                         isClearable
