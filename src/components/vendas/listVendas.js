@@ -32,8 +32,8 @@ const carregarVendas = async () => {
   };
 
   const deleteFilter = () => {
-    // setCliente(null);
-    // setRota(null);
+    setCliente(null);
+    setRota(null);
     setNumeroDocumento('');
     // setSearchParams({numero_documento:null});
   };
@@ -71,6 +71,7 @@ const carregarVendas = async () => {
                 cacheOptions
                 loadOptions={fetchPessoasOptions}
                 onChange={setCliente}
+                value={cliente}
                 placeholder="Cliente..."
                 defaultOptions
                 isClearable
@@ -83,6 +84,7 @@ const carregarVendas = async () => {
                 cacheOptions
                 loadOptions={fetchRotasOptions}
                 onChange={setRota}
+                value={rota}
                 placeholder="Rota..."
                 defaultOptions
                 isClearable

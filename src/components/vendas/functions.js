@@ -2,6 +2,12 @@ import axiosInstance from "../../services/axios";
 
 export const fetchVendas = async (numero_documento = null, cliente = null, rota = null, page = 1, limit = 9) => {
     try {
+      if(cliente){
+        cliente = cliente.value;
+      }
+      if(rota){
+        rota = rota.value;
+      }
       const response = await axiosInstance.get('/listVendas', {
         params: {
             numero_documento: numero_documento,
@@ -111,7 +117,6 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
   
     try {
       const response = await axiosInstance.get(`/listPessoas?search=${inputValue}`);
-        console.log(response);
       return response.data.map((pessoa) => ({
         value: pessoa.id,
         label: pessoa.nome
