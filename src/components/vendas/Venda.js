@@ -31,23 +31,31 @@ const Venda = () => {
       const venda = await createVenda(selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber);
       //setMensagem('Venda adicionada!');
       if(venda.status == 200){
-        navigate(`/vendas?numero_documento=${venda.data.id}`); 
+        navigate(`/vendas`); 
       } else {
         alert('houve um erro');
         console.log(venda);
       }  
     } else if(id){
       const venda = await updateVenda(id, selectedOptionCliente, vendedor, rota, numero_documento, data_venda, produtos, contasAReceber);
-
+      if(venda.status == 200){
+        navigate(`/vendas`); 
+      } else {
+        alert('houve um erro');
+        console.log(venda);
+      }  
     }
   }
   const removerProdutoList = async (produto_aux) => {
+    let response;
     if(id){
       //remove Item_venda do banco
-      await deleteItemVenda(produto_aux.id);
+      response = await deleteItemVenda(produto_aux.id);
     }
-    setProdutos(produtos.filter(produto => produto !== produto_aux));
-    setTotal(Number(total) - (Number(produto_aux.quantidade) * Number(produto_aux.preco_unitario)));
+    if(!id || response.status == 200) {
+      setProdutos(produtos.filter(produto => produto !== produto_aux));
+      setTotal(Number(total) - (Number(produto_aux.quantidade) * Number(produto_aux.preco_unitario)));
+    }
   };
 
   const removerContaList = async (conta_aux) => {
@@ -69,12 +77,10 @@ const Venda = () => {
   const adicionarProdutoList = async (novoProduto) => {
     if(id){
       novoProduto.id = await createItemVenda(novoProduto, id);
+    } else {
+      novoProduto.id = Date.now();      
     }
-    setTotal(Number(total) + (Number(novoProduto.quantidade) * Number(novoProduto.preco_unitario)));
-    if(!id){
-      novoProduto.id = Date.now();
-    }
-    
+    setTotal(Number(total) + (Number(novoProduto.quantidade) * Number(novoProduto.preco_unitario)));    
     novoProduto.nome = `Produto ${produtos.length + 1}`;
     setProdutos([...produtos, novoProduto]);
 };
@@ -130,7 +136,11 @@ const adicionarContaList = async (novaConta) => {
             setDataVenda(data.data_venda);
             setProdutosAux(data.itens_venda);
             setContasAReceberAux(data.conta_a_receber);
-            setRota({value: data.rota_id, label: data.rota.titulo});
+            if(data.rota_id){
+              setRota({value: data.rota_id, label: data.rota?.titulo});
+            } else {
+              setRota(null);
+            }
             setTotal(data.total);
             setNumeroDocumento(data.numero_documento);
           } catch (error) {

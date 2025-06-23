@@ -84,16 +84,17 @@ export const fetchVendas = async (numero_documento = null, cliente = null, rota 
   };
 
   export const deleteItemVenda = async (id) => {
-    //retorna vendas cujo parâmetros são exatos ao da busca.
     try {
       const response = await axiosInstance.post('/deleteItemVenda', {
         params: {
             id: id
         }
       });
-      return response.data;
+      return response;
     } catch (error) {
-      throw new Error(error.response ? error.response.data.message : error.message);
+      alert('houve um erro.');
+      console.log(error);
+      return error;
     }
   };
 
