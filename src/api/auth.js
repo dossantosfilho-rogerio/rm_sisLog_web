@@ -15,6 +15,18 @@ export const login = async (cpf, password) => {
   }
 };
 
+
+export const createLogin = async (nome, cpf, password) => {
+  try {
+    let name = nome;
+    const response = await axiosInstance.post('/createUser', { name, cpf, password });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response ? error.response.data.message : error.message);
+  }
+};
+
 export const isAuthenticated = () => {
     // Simulação de verificação de token
     return localStorage.getItem("token") !== null;

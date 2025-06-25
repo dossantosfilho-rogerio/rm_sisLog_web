@@ -19,6 +19,7 @@ import ListVendas from './components/vendas/listVendas';
 import Venda from './components/vendas/Venda';
 import ListContasAReceber from './components/contasareceber/listContasAReceber';
 import Site from './components/site/Site';
+import CreateLogin from './components/CreateLogin';
 
 function App() {
   useEffect(() => {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/app" element={<Login />} />
         
         <Route element={<ProtectedRoute />}>
+        <Route path="/create" element={<CreateLogin />} />
           <Route path="/home" element={<Home />} />
           <Route path="/contasareceber" element={<ListContasAReceber />} />
           <Route path="/vendas" element={<ListVendas />} />
