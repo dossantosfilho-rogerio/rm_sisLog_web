@@ -18,6 +18,7 @@ import Rota from './components/rotas/Rota';
 import ListVendas from './components/vendas/listVendas';
 import Venda from './components/vendas/Venda';
 import ListContasAReceber from './components/contasareceber/listContasAReceber';
+import Site from './components/site/Site';
 
 function App() {
   useEffect(() => {
@@ -28,7 +29,8 @@ function App() {
     
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Site />} />
+        <Route path="/app" element={<Login />} />
         
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
