@@ -5,7 +5,7 @@ const Header = () => {
   const location = useLocation();
   const handleLogOut = () => {
     localStorage.removeItem('token');
-    navigate("/"); 
+    navigate("/app"); 
   };
 
   return (

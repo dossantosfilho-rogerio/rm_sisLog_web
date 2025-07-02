@@ -34,7 +34,7 @@ function App() {
         <Route path="/app" element={<Login />} />
         
         <Route element={<ProtectedRoute />}>
-        <Route path="/create" element={<CreateLogin />} />
+          <Route path="/create" element={<CreateLogin />} />
           <Route path="/home" element={<Home />} />
           <Route path="/contasareceber" element={<ListContasAReceber />} />
           <Route path="/vendas" element={<ListVendas />} />
